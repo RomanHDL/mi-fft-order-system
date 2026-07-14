@@ -341,12 +341,6 @@ body.preview-mode .print-area {
   margin-bottom: 3cqw;
 }
 
-.order-caption {
-  font-size: 2.8cqw;
-  font-weight: 700;
-  margin-bottom: 1cqw;
-}
-
 /* Sin línea inferior: el valor grande y en negritas es suficiente indicador. */
 .order-value {
   font-size: 7.2cqw;
@@ -414,9 +408,9 @@ body.preview-mode .print-area {
   margin-bottom: 1cqw;
 }
 
-/* Cuadro cuadrado y grande para sello/firma física del personal de calidad. */
+/* Cuadro grande para sello/firma física del personal de calidad (un poco más ancho que alto). */
 .calidad-box {
-  width: 18cqw;
+  width: 24cqw;
   height: 18cqw;
   margin: 0 auto;
   border: 1.5px solid var(--black);
@@ -645,12 +639,11 @@ body.preview-mode .print-area {
   .label-logo { height: 0.6in; margin-bottom: 0.36in; }
   .label-title { font-size: 38pt; margin: 0 0 0.26in; }
   .order-block { margin-bottom: 0.26in; }
-  .order-caption { font-size: 16pt; margin-bottom: 0.08in; }
   .order-value { font-size: 42pt; min-height: 0.65in; }
-  .label-bottom { grid-template-columns: 1.7in 1fr 2.5in; gap: 0.3in; }
+  .label-bottom { grid-template-columns: 1.7in 1fr 2.8in; gap: 0.3in; }
   .fecha-caption { font-size: 15pt; margin-bottom: 0.3in; }
   .fecha-value { font-size: 15pt; min-width: 1.9in; padding-bottom: 0.03in; }
   .qr-canvas { width: 1.7in; height: 1.7in; }
   .calidad-caption { font-size: 15pt; margin-bottom: 0.08in; }
-  .calidad-box { width: 2in; height: 2in; margin: 0 auto; }
+  .calidad-box { width: 2.6in; height: 2in; margin: 0 auto; }
 }
