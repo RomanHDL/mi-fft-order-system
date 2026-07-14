@@ -318,43 +318,44 @@ body.preview-mode .print-area {
 }
 
 .label-logo {
-  height: 5.5cqw;
+  align-self: flex-start; /* esquina superior IZQUIERDA, no centrado */
+  height: 6cqw;
   width: auto;
-  margin-bottom: 2cqw;
+  margin-bottom: 1.6cqw;
 }
 
 .label-title {
-  font-size: 4.4cqw;
+  width: 100%;
+  font-size: 6.5cqw;
   font-weight: 800;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.02em;
   line-height: 1.15;
-  margin: 0 0 3.5cqw;
+  margin: 0 0 3cqw;
 }
 
 .order-block {
   width: 100%;
   text-align: center;
-  margin-bottom: 4cqw;
+  margin-bottom: 3cqw;
 }
 
 .order-caption {
-  font-size: 2.2cqw;
+  font-size: 2.8cqw;
   font-weight: 700;
-  margin-bottom: 1.2cqw;
+  margin-bottom: 1cqw;
 }
 
+/* Sin línea inferior: el valor grande y en negritas es suficiente indicador. */
 .order-value {
-  font-size: 5cqw;
+  font-size: 7.2cqw;
   font-weight: 800;
   letter-spacing: 0.03em;
-  min-height: 5.5cqw;
-  border-bottom: 2.5px solid var(--black);
+  min-height: 8cqw;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  padding-bottom: 0.6cqw;
   word-break: break-all;
 }
 
@@ -370,14 +371,14 @@ body.preview-mode .print-area {
 .fecha-block { text-align: left; }
 
 .fecha-caption {
-  font-size: 1.9cqw;
+  font-size: 2.6cqw;
   font-weight: 800;
   letter-spacing: 0.05em;
   margin-bottom: 3.5cqw;
 }
 
 .fecha-value {
-  font-size: 1.9cqw;
+  font-size: 2.6cqw;
   font-weight: 600;
   border-bottom: 1.5px solid var(--black);
   min-width: 60%;
@@ -390,8 +391,8 @@ body.preview-mode .print-area {
 }
 
 .qr-canvas {
-  width: 15cqw;
-  height: 15cqw;
+  width: 16cqw;
+  height: 16cqw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -407,15 +408,16 @@ body.preview-mode .print-area {
 .calidad-block { text-align: center; }
 
 .calidad-caption {
-  font-size: 1.9cqw;
+  font-size: 2.6cqw;
   font-weight: 800;
   letter-spacing: 0.05em;
   margin-bottom: 1cqw;
 }
 
+/* Cuadro grande para sello/firma física del personal de calidad. */
 .calidad-box {
   width: 100%;
-  height: 9cqw;
+  height: 13cqw;
   border: 1.5px solid var(--black);
 }
 
@@ -639,15 +641,15 @@ body.preview-mode .print-area {
     break-inside: avoid-page;
   }
 
-  .label-logo { height: 0.55in; margin-bottom: 0.16in; }
-  .label-title { font-size: 26pt; margin: 0 0 0.3in; }
-  .order-block { margin-bottom: 0.32in; }
-  .order-caption { font-size: 13pt; margin-bottom: 0.1in; }
-  .order-value { font-size: 30pt; min-height: 0.5in; padding-bottom: 0.05in; }
-  .label-bottom { grid-template-columns: 1.7in 1fr 2.3in; gap: 0.3in; }
-  .fecha-caption { font-size: 11pt; margin-bottom: 0.32in; }
-  .fecha-value { font-size: 11pt; min-width: 1.9in; padding-bottom: 0.03in; }
-  .qr-canvas { width: 1.6in; height: 1.6in; }
-  .calidad-caption { font-size: 11pt; margin-bottom: 0.08in; }
-  .calidad-box { width: 2.2in; height: 1.1in; }
+  .label-logo { height: 0.6in; margin-bottom: 0.14in; }
+  .label-title { font-size: 38pt; margin: 0 0 0.26in; }
+  .order-block { margin-bottom: 0.26in; }
+  .order-caption { font-size: 16pt; margin-bottom: 0.08in; }
+  .order-value { font-size: 42pt; min-height: 0.65in; }
+  .label-bottom { grid-template-columns: 1.7in 1fr 2.5in; gap: 0.3in; }
+  .fecha-caption { font-size: 15pt; margin-bottom: 0.3in; }
+  .fecha-value { font-size: 15pt; min-width: 1.9in; padding-bottom: 0.03in; }
+  .qr-canvas { width: 1.7in; height: 1.7in; }
+  .calidad-caption { font-size: 15pt; margin-bottom: 0.08in; }
+  .calidad-box { width: 2.4in; height: 1.35in; }
 }
