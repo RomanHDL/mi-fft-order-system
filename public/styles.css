@@ -241,7 +241,7 @@ h1, h2, h3 { margin: 0; }
   top: 16px;
   right: 16px;
   z-index: 60;
-  display: flex;
+  display: none; /* solo visible en modo vista previa (ver body.preview-mode abajo) */
   gap: 10px;
   background: var(--white);
   border: 1.5px solid var(--black);

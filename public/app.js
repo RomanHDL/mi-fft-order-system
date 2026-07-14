@@ -213,8 +213,10 @@
   historyBody.addEventListener('click', async (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
-    const id = Number(btn.dataset.id);
-    const label = currentLabels.find((l) => l.id === id);
+    const id = btn.dataset.id;
+    // Los IDs que devuelve Neon llegan como string (bigint serializado); comparar
+    // como string evita fallos de igualdad estricta contra number.
+    const label = currentLabels.find((l) => String(l.id) === String(id));
     if (!label) return;
 
     if (btn.dataset.action === 'reprint') {
