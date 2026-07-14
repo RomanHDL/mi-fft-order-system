@@ -8,31 +8,46 @@
 </head>
 <body>
 
+  <!-- ============================== HEADER ============================== -->
   <header class="no-print app-header">
-    <img src="/logo-mitech.png" alt="Mi Technologies" class="header-logo">
-    <div>
-      <h1>Etiquetas de Preparación de Tarima por FFT</h1>
-      <p class="subtitle">Mi Technologies Internacional S.A. de C.V. · Área FFT TV</p>
+    <div class="header-left">
+      <img src="/logo-mitech.png" alt="Mi Technologies" class="header-logo brand-logo">
+      <div class="header-titles">
+        <h1>Etiquetas de Preparación de Tarima por FFT</h1>
+        <p class="subtitle">Mi Technologies International S.A. de C.V. · Área FFT TV</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <button type="button" id="btn-history" class="btn btn-header">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <polyline points="12 7 12 12 16 14"></polyline>
+        </svg>
+        <span>Historial de Etiquetas</span>
+      </button>
     </div>
   </header>
 
-  <main class="no-print layout">
+  <!-- ======================== BARRA DE CAPTURA ======================== -->
+  <!-- OJO: <main> NO lleva .no-print — contiene la hoja imprimible (#print-area).
+       display:none en un ancestro no se puede revertir con visibility en el hijo,
+       así que .no-print se aplica a cada bloque no imprimible por separado. -->
+  <main class="main-content">
 
-    <section class="panel">
-      <h2>Datos de la etiqueta</h2>
-      <form id="label-form" novalidate>
-        <div class="field">
+    <section class="capture-bar no-print" aria-label="Datos de la etiqueta">
+      <form id="label-form" novalidate class="capture-form">
+        <div class="field field-order">
           <label for="order-number">No. de Orden</label>
           <input id="order-number" name="orderNumber" type="text"
-                 placeholder="Ej. FBA12345, FFT-2026-001, ABC123"
-                 autocomplete="off" spellcheck="false" required>
-          <p class="hint">Letras, números y guiones. Ej: FBA12345 · FFT-2026-001 · A1B2C3</p>
+                 placeholder="FBA12345, FFT-2026-001, ABC123"
+                 autocomplete="off" spellcheck="false" required
+                 aria-describedby="order-hint">
         </div>
 
-        <div class="field">
+        <div class="field field-date">
           <label for="label-date">Fecha</label>
           <input id="label-date" name="labelDate" type="text"
-                 placeholder="DD/MM/AAAA" autocomplete="off" required>
+                 readonly aria-readonly="true" tabindex="-1">
         </div>
 
         <div class="actions">
@@ -41,13 +56,67 @@
           <button type="button" id="btn-print" class="btn">Imprimir</button>
           <button type="button" id="btn-new" class="btn btn-ghost">Nueva etiqueta</button>
         </div>
-
-        <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
       </form>
+
+      <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
+      <p class="hint" id="order-hint">Letras, números y guiones. Se guarda en MAYÚSCULAS. Ej: FBA12345 · FFT-2026-001 · A1B2C3</p>
     </section>
 
-    <section class="panel history-panel">
-      <h2>Historial de etiquetas</h2>
+    <!-- =================== VISTA PREVIA DE LA HOJA =================== -->
+    <section class="sheet-section" aria-label="Vista previa de la etiqueta">
+      <div class="preview-wrap" id="preview-wrap">
+        <div class="print-area" id="print-area">
+          <div class="print-inner">
+            <img src="/logo-mitech.png" alt="Mi Technologies" class="label-logo brand-logo">
+
+            <h2 class="label-title">PREPARACIÓN DE<br>TARIMA POR FFT</h2>
+
+            <div class="order-block">
+              <div class="order-caption">No. De Orden:</div>
+              <div class="order-value" id="order-value-display">&nbsp;</div>
+            </div>
+
+            <div class="label-bottom">
+              <div class="fecha-block">
+                <div class="fecha-caption">FECHA</div>
+                <div class="fecha-value" id="fecha-value-display">&nbsp;</div>
+              </div>
+
+              <div class="qr-block">
+                <div id="qr-canvas" class="qr-canvas"></div>
+              </div>
+
+              <div class="calidad-block">
+                <div class="calidad-caption">CALIDAD</div>
+                <div class="calidad-box"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="print-info no-print">Al imprimir se generará una sola hoja con el formato de la etiqueta.</p>
+  </main>
+
+  <footer class="no-print app-footer">
+    Mi Technologies Internacional S.A. de C.V. · Sistema interno · Área FFT TV
+  </footer>
+
+  <!-- Botonera flotante sólo visible en modo "Vista previa" (no imprime) -->
+  <div class="preview-toolbar no-print" id="preview-toolbar">
+    <button type="button" id="btn-preview-print" class="btn btn-primary">Imprimir</button>
+    <button type="button" id="btn-preview-close" class="btn btn-ghost">Cerrar vista previa</button>
+  </div>
+
+  <!-- ============================ MODAL: HISTORIAL ============================ -->
+  <div class="modal-backdrop no-print hidden" id="history-backdrop"></div>
+  <div class="modal history-modal no-print hidden" id="history-modal" role="dialog" aria-modal="true" aria-labelledby="history-modal-title">
+    <div class="modal-header">
+      <h2 id="history-modal-title">Historial de Etiquetas</h2>
+      <button type="button" id="btn-close-history" class="modal-close" aria-label="Cerrar historial">✕</button>
+    </div>
+    <div class="modal-body">
       <div class="history-toolbar">
         <input id="search-input" type="text" placeholder="Buscar por No. de Orden…">
         <button type="button" id="btn-refresh" class="btn btn-small">Actualizar</button>
@@ -68,45 +137,6 @@
       </div>
       <p class="empty-msg hidden" id="empty-msg">Sin etiquetas registradas todavía.</p>
       <p class="empty-msg hidden" id="error-msg">No se pudo cargar el historial. Verifica la conexión / DATABASE_URL.</p>
-    </section>
-
-  </main>
-
-  <!-- Botonera flotante sólo visible en modo "Vista previa" (no imprime) -->
-  <div class="preview-toolbar no-print" id="preview-toolbar">
-    <button type="button" id="btn-preview-print" class="btn btn-primary">Imprimir</button>
-    <button type="button" id="btn-preview-close" class="btn btn-ghost">Cerrar vista previa</button>
-  </div>
-
-  <!-- ======================= ETIQUETA (única zona imprimible) ======================= -->
-  <div class="preview-wrap" id="preview-wrap">
-    <div class="print-area" id="print-area">
-
-      <img src="/logo-mitech.png" alt="Mi Technologies" class="label-logo">
-
-      <h2 class="label-title">PREPARACIÓN DE<br>TARIMA POR FFT</h2>
-
-      <div class="order-block">
-        <div class="order-caption">No. De Orden:</div>
-        <div class="order-value" id="order-value-display">&nbsp;</div>
-      </div>
-
-      <div class="label-bottom">
-        <div class="fecha-block">
-          <div class="fecha-caption">FECHA</div>
-          <div class="fecha-value" id="fecha-value-display">&nbsp;</div>
-        </div>
-
-        <div class="qr-block">
-          <div id="qr-canvas" class="qr-canvas"></div>
-        </div>
-
-        <div class="calidad-block">
-          <div class="calidad-caption">CALIDAD</div>
-          <div class="calidad-box"></div>
-        </div>
-      </div>
-
     </div>
   </div>
 

@@ -2,12 +2,15 @@
    Preparación de Tarima por FFT — lógica de la app.
    Sin frameworks, JS moderno de navegador. QRCode y XLSX se cargan
    localmente desde /vendor (sin CDN, apto para piso de producción offline).
+
+   Endpoints (sin cambios): GET/POST/DELETE /api/labels — ver api/index.js
    ========================================================================== */
 
 (function () {
   'use strict';
 
   const ORDER_PATTERN = /^[A-Za-z0-9-]+$/;
+  const QR_DEBOUNCE_MS = 200;
 
   // ---- Referencias del DOM ----
   const orderInput = document.getElementById('order-number');
@@ -27,6 +30,11 @@
   const btnPreviewPrint = document.getElementById('btn-preview-print');
   const btnPreviewClose = document.getElementById('btn-preview-close');
 
+  const btnHistory = document.getElementById('btn-history');
+  const historyModal = document.getElementById('history-modal');
+  const historyBackdrop = document.getElementById('history-backdrop');
+  const btnCloseHistory = document.getElementById('btn-close-history');
+
   const searchInput = document.getElementById('search-input');
   const btnRefresh = document.getElementById('btn-refresh');
   const btnExport = document.getElementById('btn-export');
@@ -35,10 +43,22 @@
   const errorMsg = document.getElementById('error-msg');
 
   let qrInstance = null;
+  let qrDebounceTimer = null;
   let currentLabels = [];
   let searchTimer = null;
 
-  // ---- Utilidades de fecha ----
+  // ---- Aviso técnico si falta el logo (el componente queda listo para
+  // cargarlo automáticamente en cuanto el archivo exista en /public). ----
+  document.querySelectorAll('img.brand-logo').forEach((img) => {
+    img.addEventListener('error', () => {
+      console.error(
+        `[Logo] No se encontró "${img.getAttribute('src')}". Coloca el logo oficial de ` +
+        'Mi Technologies en public/logo-mitech.png — aparecerá automáticamente sin tocar código.'
+      );
+    }, { once: true });
+  });
+
+  // ---- Utilidades de fecha (hora LOCAL del dispositivo, sin desfase UTC) ----
   function pad2(n) { return n.toString().padStart(2, '0'); }
 
   function todayDisplayString() {
@@ -63,6 +83,12 @@
     }[ch]));
   }
 
+  // ---- Normalización del No. de Orden: mayúsculas, sin espacios, sólo
+  // letras/números/guiones (evita caracteres innecesarios desde que se escriben) ----
+  function normalizeOrderValue(raw) {
+    return raw.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+  }
+
   // ---- Etiqueta / QR en vivo ----
   function updateQr(text) {
     if (!text) {
@@ -84,16 +110,37 @@
     }
   }
 
+  function scheduleQrUpdate(text) {
+    clearTimeout(qrDebounceTimer);
+    qrDebounceTimer = setTimeout(() => updateQr(text), QR_DEBOUNCE_MS);
+  }
+
+  // Actualiza el texto (número/fecha) al instante; el QR se regenera con
+  // debounce mientras se escribe para no saturar en cada tecla.
   function updateLabelPreview() {
     const orderNumber = orderInput.value.trim();
     const dateValue = dateInput.value.trim();
-    orderValueDisplay.textContent = orderNumber || ' ';
-    fechaValueDisplay.textContent = dateValue || ' ';
+    orderValueDisplay.textContent = orderNumber || ' ';
+    fechaValueDisplay.textContent = dateValue || ' ';
+    scheduleQrUpdate(orderNumber);
+  }
+
+  // Variante sin debounce: usada en acciones puntuales (nueva etiqueta,
+  // reimprimir, abrir vista previa) donde el QR debe verse correcto de inmediato.
+  function updateLabelPreviewImmediate() {
+    const orderNumber = orderInput.value.trim();
+    const dateValue = dateInput.value.trim();
+    orderValueDisplay.textContent = orderNumber || ' ';
+    fechaValueDisplay.textContent = dateValue || ' ';
+    clearTimeout(qrDebounceTimer);
     updateQr(orderNumber);
   }
 
-  orderInput.addEventListener('input', updateLabelPreview);
-  dateInput.addEventListener('input', updateLabelPreview);
+  orderInput.addEventListener('input', () => {
+    const normalized = normalizeOrderValue(orderInput.value);
+    if (normalized !== orderInput.value) orderInput.value = normalized;
+    updateLabelPreview();
+  });
 
   // ---- Mensajes de formulario ----
   function setFormMsg(text, isError) {
@@ -102,10 +149,12 @@
     formMsg.classList.toggle('ok', !isError && Boolean(text));
   }
 
-  // ---- Generar (POST) ----
+  // ---- Generar (POST /api/labels — sin cambios de endpoint/lógica) ----
   labelForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const orderNumber = orderInput.value.trim();
+    if (btnGenerate.disabled) return; // evita doble envío por doble clic/Enter
+
+    const orderNumber = normalizeOrderValue(orderInput.value.trim());
     const labelDate = dateInput.value.trim();
 
     if (!orderNumber || !ORDER_PATTERN.test(orderNumber)) {
@@ -115,11 +164,12 @@
     }
     if (!labelDate) {
       setFormMsg('La fecha es requerida.', true);
-      dateInput.focus();
       return;
     }
 
     btnGenerate.disabled = true;
+    const originalLabel = btnGenerate.textContent;
+    btnGenerate.textContent = 'Guardando…';
     setFormMsg('Guardando…', false);
     try {
       const res = await fetch('/api/labels', {
@@ -132,15 +182,17 @@
       setFormMsg('Etiqueta generada y guardada en el historial. Ya puedes imprimirla.', false);
       fetchHistory(searchInput.value.trim());
     } catch (err) {
+      console.error('[Generar]', err);
       setFormMsg(err.message, true);
     } finally {
       btnGenerate.disabled = false;
+      btnGenerate.textContent = originalLabel;
     }
   });
 
   // ---- Vista previa ----
   function openPreview() {
-    updateLabelPreview();
+    updateLabelPreviewImmediate();
     document.body.classList.add('preview-mode');
   }
   function closePreview() {
@@ -148,9 +200,6 @@
   }
   btnPreview.addEventListener('click', openPreview);
   btnPreviewClose.addEventListener('click', closePreview);
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && document.body.classList.contains('preview-mode')) closePreview();
-  });
 
   // ---- Imprimir ----
   btnPrint.addEventListener('click', () => window.print());
@@ -161,12 +210,37 @@
     orderInput.value = '';
     dateInput.value = todayDisplayString();
     setFormMsg('', false);
-    updateLabelPreview();
+    updateLabelPreviewImmediate();
     closePreview();
     orderInput.focus();
   });
 
-  // ---- Historial ----
+  // ---- Modal de historial ----
+  function openHistoryModal() {
+    historyModal.classList.remove('hidden');
+    historyBackdrop.classList.remove('hidden');
+    fetchHistory(searchInput.value.trim());
+    searchInput.focus();
+  }
+  function closeHistoryModal() {
+    historyModal.classList.add('hidden');
+    historyBackdrop.classList.add('hidden');
+    btnHistory.focus();
+  }
+  btnHistory.addEventListener('click', openHistoryModal);
+  btnCloseHistory.addEventListener('click', closeHistoryModal);
+  historyBackdrop.addEventListener('click', closeHistoryModal);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (document.body.classList.contains('preview-mode')) {
+      closePreview();
+    } else if (!historyModal.classList.contains('hidden')) {
+      closeHistoryModal();
+    }
+  });
+
+  // ---- Historial (GET/DELETE /api/labels — sin cambios de endpoint/lógica) ----
   async function fetchHistory(search) {
     try {
       const url = '/api/labels' + (search ? '?search=' + encodeURIComponent(search) : '');
@@ -222,17 +296,20 @@
     if (btn.dataset.action === 'reprint') {
       orderInput.value = label.order_number;
       dateInput.value = label.label_date;
-      updateLabelPreview();
+      closeHistoryModal();
       openPreview();
     } else if (btn.dataset.action === 'delete') {
       if (!confirm(`¿Eliminar la etiqueta de la orden "${label.order_number}"? Esta acción no se puede deshacer.`)) return;
+      btn.disabled = true;
       try {
         const res = await fetch('/api/labels?id=' + id, { method: 'DELETE' });
         const data = await res.json();
         if (!res.ok || !data.success) throw new Error(data.error || 'No se pudo eliminar.');
         fetchHistory(searchInput.value.trim());
       } catch (err) {
+        console.error('[Eliminar]', err);
         alert('No se pudo eliminar el registro: ' + err.message);
+        btn.disabled = false;
       }
     }
   });
@@ -244,7 +321,7 @@
 
   btnRefresh.addEventListener('click', () => fetchHistory(searchInput.value.trim()));
 
-  // ---- Exportar a Excel ----
+  // ---- Exportar a Excel (SheetJS — sin cambios de lógica) ----
   btnExport.addEventListener('click', () => {
     if (!currentLabels.length) {
       alert('No hay etiquetas en el historial actual para exportar.');
@@ -264,6 +341,7 @@
 
   // ---- Inicialización ----
   dateInput.value = todayDisplayString();
-  updateLabelPreview();
+  updateLabelPreviewImmediate();
   fetchHistory('');
+  orderInput.focus();
 })();

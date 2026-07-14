@@ -1,7 +1,7 @@
 /* ==========================================================================
    Preparación de Tarima por FFT — Mi Technologies
-   Paleta: blanco / negro / grises. Estilo industrial, plano, sin sombras
-   exageradas ni colores llamativos.
+   Sistema industrial: blanco / negro / grises + azul institucional.
+   Sin tarjetas grandes, sin sombras exageradas, sin colores llamativos.
    ========================================================================== */
 
 :root {
@@ -9,10 +9,15 @@
   --gray-900: #1f1f1f;
   --gray-700: #4a4a4a;
   --gray-500: #7a7a7a;
-  --gray-300: #cfcfcf;
-  --gray-200: #e4e4e4;
-  --gray-100: #f4f4f4;
+  --gray-300: #d3d6d9;
+  --gray-200: #e6e8ea;
+  --gray-100: #f4f5f6;
   --white: #ffffff;
+
+  --brand-blue: #0f5f96;
+  --brand-blue-dark: #0b4a76;
+  --brand-blue-tint: #eaf3fa;
+
   --font: "Segoe UI", Arial, Helvetica, sans-serif;
 }
 
@@ -30,67 +35,94 @@ h1, h2, h3 { margin: 0; }
 
 .hidden { display: none !important; }
 
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
 /* ---------------------------------------------------------------------- */
-/* Encabezado de la aplicación (no imprime)                                */
+/* HEADER                                                                   */
 /* ---------------------------------------------------------------------- */
 
 .app-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
-  padding: 18px 24px;
+  padding: 14px 20px;
   background: var(--white);
-  border-bottom: 2px solid var(--black);
+  border-bottom: 3px solid var(--brand-blue);
+  flex-wrap: wrap;
 }
 
-.header-logo { height: 40px; width: auto; }
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
 
-.app-header h1 { font-size: 1.25rem; font-weight: 700; }
-.app-header .subtitle { margin: 2px 0 0; font-size: 0.85rem; color: var(--gray-700); }
+.header-logo { height: 38px; width: auto; flex-shrink: 0; }
+
+.header-titles h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+.header-titles .subtitle {
+  margin: 2px 0 0;
+  font-size: 0.8rem;
+  color: var(--gray-700);
+}
+
+.header-right { flex-shrink: 0; }
+
+.btn-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--brand-blue);
+  color: var(--white);
+  border: 1.5px solid var(--brand-blue);
+}
+.btn-header:hover { background: var(--brand-blue-dark); border-color: var(--brand-blue-dark); }
 
 /* ---------------------------------------------------------------------- */
-/* Layout de paneles (controles + historial)                              */
+/* CONTENIDO PRINCIPAL                                                      */
 /* ---------------------------------------------------------------------- */
 
-.layout {
-  display: grid;
-  grid-template-columns: minmax(280px, 380px) 1fr;
-  gap: 20px;
-  padding: 20px;
-  max-width: 1200px;
+.main-content {
+  max-width: 1100px;
   margin: 0 auto;
-  align-items: start;
+  padding: 18px 16px 32px;
 }
 
-@media (max-width: 860px) {
-  .layout { grid-template-columns: 1fr; }
-}
+/* Barra horizontal de captura ------------------------------------------- */
 
-.panel {
+.capture-bar {
   background: var(--white);
   border: 1px solid var(--gray-300);
   border-radius: 4px;
-  padding: 18px 20px 22px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
 }
 
-.panel h2 {
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-bottom: 2px solid var(--black);
-  padding-bottom: 8px;
-  margin-bottom: 16px;
+.capture-form {
+  display: flex;
+  align-items: end;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
-.field { margin-bottom: 14px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field-order { flex: 1 1 260px; min-width: 220px; }
+.field-date { flex: 0 0 150px; }
 
 .field label {
-  display: block;
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  margin-bottom: 6px;
+  color: var(--gray-700);
 }
 
 .field input[type="text"] {
@@ -101,24 +133,25 @@ h1, h2, h3 { margin: 0; }
   border-radius: 3px;
   background: var(--white);
   color: var(--black);
+  font-family: var(--font);
 }
 
-.field input[type="text"]:focus {
-  outline: none;
-  border-color: var(--black);
+.field input[type="text"]:focus-visible {
+  outline: 3px solid var(--brand-blue-tint);
+  outline-offset: 0;
+  border-color: var(--brand-blue);
 }
 
-.hint {
-  margin: 6px 0 0;
-  font-size: 0.75rem;
+#label-date[readonly] {
+  background: var(--gray-100);
   color: var(--gray-700);
+  cursor: default;
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 18px;
 }
 
 .btn {
@@ -131,15 +164,19 @@ h1, h2, h3 { margin: 0; }
   font-weight: 600;
   border-radius: 3px;
   cursor: pointer;
-  min-height: 44px; /* objetivo táctil para tablets industriales */
+  min-height: 44px;
+  font-family: var(--font);
 }
 
 .btn:hover { background: var(--gray-100); }
 .btn:active { background: var(--gray-200); }
+.btn:focus-visible { outline: 3px solid var(--brand-blue-tint); outline-offset: 1px; border-color: var(--brand-blue); }
+.btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
 .btn-primary {
   background: var(--black);
   color: var(--white);
+  border-color: var(--black);
 }
 .btn-primary:hover { background: var(--gray-900); }
 
@@ -155,7 +192,7 @@ h1, h2, h3 { margin: 0; }
 }
 
 .form-msg {
-  margin: 14px 0 0;
+  margin: 12px 0 0;
   font-size: 0.85rem;
   font-weight: 600;
   min-height: 1.2em;
@@ -163,9 +200,295 @@ h1, h2, h3 { margin: 0; }
 .form-msg.ok { color: #1a6b1a; }
 .form-msg.error { color: #a01313; }
 
+.hint {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  color: var(--gray-700);
+}
+
+/* Mensaje informativo de impresión --------------------------------------- */
+
+.print-info {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--gray-700);
+  background: var(--brand-blue-tint);
+  border: 1px solid #cfe3f0;
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin: 18px auto 0;
+  max-width: 640px;
+}
+
+/* Footer ------------------------------------------------------------------ */
+
+.app-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  padding: 16px;
+  border-top: 1px solid var(--gray-300);
+}
+
 /* ---------------------------------------------------------------------- */
-/* Historial                                                               */
+/* Botonera flotante de "Vista previa"                                     */
 /* ---------------------------------------------------------------------- */
+
+.preview-toolbar {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 60;
+  display: none;
+  gap: 10px;
+  background: var(--white);
+  border: 1.5px solid var(--black);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+/* Modo "Vista previa": oculta el resto de la página y agranda la hoja sobre
+   un fondo tipo mesa de trabajo, con la botonera flotante Imprimir/Cerrar. */
+body.preview-mode .app-header,
+body.preview-mode .capture-bar,
+body.preview-mode .print-info,
+body.preview-mode .app-footer {
+  display: none;
+}
+
+body.preview-mode .preview-toolbar { display: flex; }
+
+body.preview-mode .sheet-section {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: #58595c;
+  overflow: auto;
+  padding: 70px 16px 40px;
+}
+
+body.preview-mode .preview-wrap {
+  width: min(680px, 92vw);
+  margin: auto;
+}
+
+body.preview-mode .print-area {
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  border-color: transparent;
+}
+
+/* ==========================================================================
+   HOJA DE ETIQUETA — proporción de Carta (8.5in x 11in) preservada en
+   pantalla mediante container queries; en impresión usa unidades físicas
+   absolutas exactas a la página.
+   ========================================================================== */
+
+.sheet-section {
+  display: flex;
+  justify-content: center;
+}
+
+.preview-wrap {
+  container-type: inline-size;
+  width: min(680px, 100%);
+  aspect-ratio: 8.5 / 11;
+  margin: 0 auto;
+}
+
+.print-area {
+  width: 100%;
+  height: 100%;
+  background: var(--white);
+  border: 1px solid var(--gray-300);
+  padding: 6cqw 7cqw 8cqw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--font);
+  color: var(--black);
+  overflow: hidden;
+}
+
+.print-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.label-logo {
+  height: 9cqw;
+  width: auto;
+  margin-bottom: 3cqw;
+}
+
+.label-title {
+  font-size: 6.2cqw;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  margin: 0 0 6cqw;
+}
+
+.order-block {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 7cqw;
+}
+
+.order-caption {
+  font-size: 2.6cqw;
+  font-weight: 700;
+  margin-bottom: 2cqw;
+}
+
+.order-value {
+  font-size: 6.8cqw;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  min-height: 9cqw;
+  border-bottom: 2.5px solid var(--black);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 1cqw;
+  word-break: break-all;
+}
+
+.label-bottom {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.2fr 1.4fr 1.4fr;
+  align-items: end;
+  gap: 3cqw;
+  margin-top: auto;
+}
+
+.fecha-block { text-align: left; }
+
+.fecha-caption {
+  font-size: 2.3cqw;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-bottom: 6cqw;
+}
+
+.fecha-value {
+  font-size: 2.3cqw;
+  font-weight: 600;
+  border-bottom: 1.5px solid var(--black);
+  min-width: 60%;
+  padding-bottom: 1cqw;
+}
+
+.qr-block {
+  display: flex;
+  justify-content: center;
+}
+
+.qr-canvas {
+  width: 20cqw;
+  height: 20cqw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qr-canvas img,
+.qr-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+  image-rendering: pixelated;
+}
+
+.calidad-block { text-align: center; }
+
+.calidad-caption {
+  font-size: 2.3cqw;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  margin-bottom: 1cqw;
+}
+
+.calidad-box {
+  width: 100%;
+  height: 15cqw;
+  border: 1.5px solid var(--black);
+}
+
+/* ---------------------------------------------------------------------- */
+/* MODAL: Historial de etiquetas                                          */
+/* ---------------------------------------------------------------------- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.55);
+  z-index: 90;
+  animation: fadeIn 160ms ease-out;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 91;
+  width: min(920px, 94vw);
+  max-height: 86vh;
+  background: var(--white);
+  border-radius: 6px;
+  border: 1px solid var(--gray-300);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+  animation: modalIn 180ms ease-out;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalIn {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.97); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 2px solid var(--black);
+  flex-shrink: 0;
+}
+
+.modal-header h2 {
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.modal-close {
+  appearance: none;
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--gray-700);
+  padding: 6px 8px;
+  border-radius: 3px;
+}
+.modal-close:hover { background: var(--gray-100); color: var(--black); }
+.modal-close:focus-visible { outline: 3px solid var(--brand-blue-tint); border-color: var(--brand-blue); }
+
+.modal-body {
+  padding: 16px 20px 20px;
+  overflow-y: auto;
+}
+
+/* Historial dentro del modal --------------------------------------------- */
 
 .history-toolbar {
   display: flex;
@@ -181,6 +504,11 @@ h1, h2, h3 { margin: 0; }
   border: 1.5px solid var(--gray-500);
   border-radius: 3px;
   font-size: 0.9rem;
+  font-family: var(--font);
+}
+.history-toolbar input[type="text"]:focus-visible {
+  outline: 3px solid var(--brand-blue-tint);
+  border-color: var(--brand-blue);
 }
 
 .table-wrap { overflow-x: auto; }
@@ -214,7 +542,7 @@ h1, h2, h3 { margin: 0; }
 .link-btn {
   border: none;
   background: none;
-  color: var(--gray-900);
+  color: var(--brand-blue-dark);
   font-weight: 600;
   font-size: 0.8rem;
   cursor: pointer;
@@ -223,6 +551,7 @@ h1, h2, h3 { margin: 0; }
   text-decoration: underline;
 }
 .link-btn:hover { background: var(--gray-200); }
+.link-btn:focus-visible { outline: 3px solid var(--brand-blue-tint); }
 .link-btn.danger { color: #a01313; }
 
 .empty-msg {
@@ -233,181 +562,25 @@ h1, h2, h3 { margin: 0; }
 }
 
 /* ---------------------------------------------------------------------- */
-/* Botonera flotante de "Vista previa"                                     */
+/* Responsive                                                              */
 /* ---------------------------------------------------------------------- */
 
-.preview-toolbar {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 60;
-  display: none; /* solo visible en modo vista previa (ver body.preview-mode abajo) */
-  gap: 10px;
-  background: var(--white);
-  border: 1.5px solid var(--black);
-  border-radius: 4px;
-  padding: 10px;
+@media (max-width: 780px) {
+  .capture-form { align-items: stretch; }
+  .field-order, .field-date { flex: 1 1 100%; }
+  .actions { width: 100%; }
+  .actions .btn { flex: 1 1 calc(50% - 5px); }
+}
+
+@media (max-width: 480px) {
+  .header-titles h1 { font-size: 1rem; }
+  .btn-header span { display: none; }
+  .actions .btn { flex: 1 1 100%; }
 }
 
 /* ==========================================================================
-   ETIQUETA — layout fijo en pulgadas para que la proporción impresa y en
-   pantalla sea siempre idéntica.
-   ========================================================================== */
-
-.preview-wrap {
-  display: flex;
-  justify-content: center;
-  padding: 30px 16px 60px;
-}
-
-.print-area {
-  width: 7.5in;
-  min-height: 8in;
-  background: var(--white);
-  border: 1px solid var(--gray-300); /* solo visual en pantalla, no imprime */
-  padding: 0.4in 0.5in 0.6in;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: var(--font);
-  color: var(--black);
-}
-
-.label-logo {
-  height: 0.8in;
-  width: auto;
-  margin-bottom: 0.25in;
-}
-
-.label-title {
-  font-size: 34pt;
-  font-weight: 800;
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  line-height: 1.15;
-  margin: 0 0 0.5in;
-}
-
-.order-block {
-  width: 100%;
-  max-width: 6in;
-  text-align: center;
-  margin-bottom: 0.7in;
-}
-
-.order-caption {
-  font-size: 16pt;
-  font-weight: 700;
-  text-transform: none;
-  margin-bottom: 0.15in;
-}
-
-.order-value {
-  font-size: 38pt;
-  font-weight: 800;
-  letter-spacing: 0.03em;
-  min-height: 0.7in;
-  border-bottom: 2.5px solid var(--black);
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 0.06in;
-  word-break: break-all;
-}
-
-.label-bottom {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1.4in 1fr 1.9in;
-  align-items: end;
-  gap: 0.25in;
-  margin-top: auto;
-}
-
-.fecha-block { text-align: left; }
-
-.fecha-caption {
-  font-size: 13pt;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.55in;
-}
-
-.fecha-value {
-  font-size: 13pt;
-  font-weight: 600;
-  border-bottom: 1.5px solid var(--black);
-  min-width: 1.6in;
-  padding-bottom: 0.03in;
-}
-
-.qr-block {
-  display: flex;
-  justify-content: center;
-}
-
-.qr-canvas {
-  width: 2in;
-  height: 2in;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.qr-canvas img,
-.qr-canvas canvas {
-  width: 100% !important;
-  height: 100% !important;
-  image-rendering: pixelated;
-}
-
-.calidad-block { text-align: center; }
-
-.calidad-caption {
-  font-size: 13pt;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  margin-bottom: 0.1in;
-}
-
-.calidad-box {
-  width: 1.9in;
-  height: 1.5in;
-  border: 1.5px solid var(--black);
-}
-
-/* ---------------------------------------------------------------------- */
-/* Modo "Vista previa" — oculta los paneles y presenta la etiqueta como     */
-/* saldrá impresa, sobre un fondo tipo mesa de trabajo.                    */
-/* ---------------------------------------------------------------------- */
-
-body.preview-mode .layout,
-body.preview-mode .app-header {
-  display: none;
-}
-
-body.preview-mode .preview-toolbar {
-  display: flex;
-}
-
-body.preview-mode .preview-wrap {
-  position: fixed;
-  inset: 0;
-  background: #58595c;
-  overflow: auto;
-  padding: 70px 16px 40px;
-  z-index: 40;
-}
-
-body.preview-mode .print-area {
-  margin: 0 auto;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-  border-color: transparent;
-}
-
-/* ==========================================================================
-   IMPRESIÓN
+   IMPRESIÓN — garantiza EXACTAMENTE una hoja Carta (8.5in x 11in), sólo la
+   etiqueta, sin importar el layout de pantalla.
    ========================================================================== */
 
 @page {
@@ -417,44 +590,64 @@ body.preview-mode .print-area {
 
 @media print {
   html, body {
+    width: 8.5in;
+    height: 11in;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
     background: #ffffff !important;
-    margin: 0;
-    padding: 0;
   }
 
-  .no-print,
-  .app-header,
-  .layout,
-  .preview-toolbar {
-    display: none !important;
-  }
+  .no-print { display: none !important; }
 
   body * { visibility: hidden; }
 
-  .preview-wrap,
-  .preview-wrap * ,
-  .print-area,
-  .print-area * {
+  #preview-wrap,
+  #preview-wrap *,
+  #print-area,
+  #print-area * {
     visibility: visible !important;
   }
 
-  .preview-wrap {
-    display: block !important;
-    position: absolute;
+  #preview-wrap {
+    container-type: normal;
+    position: fixed;
     inset: 0;
+    width: 8.5in;
+    height: 11in;
+    aspect-ratio: auto;
+    margin: 0;
     padding: 0;
-    background: #ffffff !important;
+    overflow: hidden;
   }
 
-  .print-area {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 7.5in;
-    min-height: auto;
+  #print-area {
+    position: fixed;
+    inset: 0;
+    width: 8.5in;
+    height: 11in;
+    margin: 0;
+    padding: 0.55in 0.6in 0.7in;
     border: none;
-    box-shadow: none;
-    padding: 0.4in 0.5in 0.6in;
+    overflow: hidden;
+    box-sizing: border-box;
+    page-break-before: avoid;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    break-before: avoid-page;
+    break-after: avoid-page;
+    break-inside: avoid-page;
   }
+
+  .label-logo { height: 0.8in; margin-bottom: 0.25in; }
+  .label-title { font-size: 34pt; margin: 0 0 0.5in; }
+  .order-block { margin-bottom: 0.7in; }
+  .order-caption { font-size: 16pt; margin-bottom: 0.15in; }
+  .order-value { font-size: 38pt; min-height: 0.7in; padding-bottom: 0.06in; }
+  .label-bottom { grid-template-columns: 1.4in 1fr 1.9in; gap: 0.25in; }
+  .fecha-caption { font-size: 13pt; margin-bottom: 0.55in; }
+  .fecha-value { font-size: 13pt; min-width: 1.6in; padding-bottom: 0.03in; }
+  .qr-canvas { width: 2in; height: 2in; }
+  .calidad-caption { font-size: 13pt; margin-bottom: 0.1in; }
+  .calidad-box { width: 1.9in; height: 1.5in; }
 }
