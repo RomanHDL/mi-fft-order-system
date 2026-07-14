@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Preparación de Tarima por FFT · Mi Technologies</title>
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <header class="no-print app-header">
+    <img src="/logo-mitech.png" alt="Mi Technologies" class="header-logo">
+    <div>
+      <h1>Etiquetas de Preparación de Tarima por FFT</h1>
+      <p class="subtitle">Mi Technologies Internacional S.A. de C.V. · Área FFT TV</p>
+    </div>
+  </header>
+
+  <main class="no-print layout">
+
+    <section class="panel">
+      <h2>Datos de la etiqueta</h2>
+      <form id="label-form" novalidate>
+        <div class="field">
+          <label for="order-number">No. de Orden</label>
+          <input id="order-number" name="orderNumber" type="text"
+                 placeholder="Ej. FBA12345, FFT-2026-001, ABC123"
+                 autocomplete="off" spellcheck="false" required>
+          <p class="hint">Letras, números y guiones. Ej: FBA12345 · FFT-2026-001 · A1B2C3</p>
+        </div>
+
+        <div class="field">
+          <label for="label-date">Fecha</label>
+          <input id="label-date" name="labelDate" type="text"
+                 placeholder="DD/MM/AAAA" autocomplete="off" required>
+        </div>
+
+        <div class="actions">
+          <button type="submit" id="btn-generate" class="btn btn-primary">Generar</button>
+          <button type="button" id="btn-preview" class="btn">Vista previa</button>
+          <button type="button" id="btn-print" class="btn">Imprimir</button>
+          <button type="button" id="btn-new" class="btn btn-ghost">Nueva etiqueta</button>
+        </div>
+
+        <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="panel history-panel">
+      <h2>Historial de etiquetas</h2>
+      <div class="history-toolbar">
+        <input id="search-input" type="text" placeholder="Buscar por No. de Orden…">
+        <button type="button" id="btn-refresh" class="btn btn-small">Actualizar</button>
+        <button type="button" id="btn-export" class="btn btn-small">Exportar a Excel</button>
+      </div>
+      <div class="table-wrap">
+        <table id="history-table">
+          <thead>
+            <tr>
+              <th>No. Orden</th>
+              <th>Fecha</th>
+              <th>Creado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+      </div>
+      <p class="empty-msg hidden" id="empty-msg">Sin etiquetas registradas todavía.</p>
+      <p class="empty-msg hidden" id="error-msg">No se pudo cargar el historial. Verifica la conexión / DATABASE_URL.</p>
+    </section>
+
+  </main>
+
+  <!-- Botonera flotante sólo visible en modo "Vista previa" (no imprime) -->
+  <div class="preview-toolbar no-print hidden" id="preview-toolbar">
+    <button type="button" id="btn-preview-print" class="btn btn-primary">Imprimir</button>
+    <button type="button" id="btn-preview-close" class="btn btn-ghost">Cerrar vista previa</button>
+  </div>
+
+  <!-- ======================= ETIQUETA (única zona imprimible) ======================= -->
+  <div class="preview-wrap" id="preview-wrap">
+    <div class="print-area" id="print-area">
+
+      <img src="/logo-mitech.png" alt="Mi Technologies" class="label-logo">
+
+      <h2 class="label-title">PREPARACIÓN DE<br>TARIMA POR FFT</h2>
+
+      <div class="order-block">
+        <div class="order-caption">No. De Orden:</div>
+        <div class="order-value" id="order-value-display">&nbsp;</div>
+      </div>
+
+      <div class="label-bottom">
+        <div class="fecha-block">
+          <div class="fecha-caption">FECHA</div>
+          <div class="fecha-value" id="fecha-value-display">&nbsp;</div>
+        </div>
+
+        <div class="qr-block">
+          <div id="qr-canvas" class="qr-canvas"></div>
+        </div>
+
+        <div class="calidad-block">
+          <div class="calidad-caption">CALIDAD</div>
+          <div class="calidad-box"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/vendor/qrcode.min.js"></script>
+  <script src="/vendor/xlsx.full.min.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
