@@ -59,12 +59,50 @@
     }, { once: true });
   });
 
-  // ---- Utilidades de fecha ----
+  // ---- Utilidades de fecha (hora LOCAL del dispositivo, sin desfase UTC) ----
   function pad2(n) { return n.toString().padStart(2, '0'); }
+
+  function todayDisplayString() {
+    const d = new Date();
+    return `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}/${d.getFullYear()}`;
+  }
 
   function todayFileToken() {
     const d = new Date();
     return `${d.getFullYear()}${pad2(d.getMonth() + 1)}${pad2(d.getDate())}`;
+  }
+
+  // Auto-inserta "/" conforme se completan 2 dígitos de día/mes (17 -> 17/,
+  // 17072026 -> 17/07/2026). Si el usuario ya escribió "/" a mano (ej. tras un
+  // solo dígito de día: "9/"), se respeta tal cual — no se reconstruye desde
+  // cero, sólo se limitan longitudes por segmento. Al borrar no reformatea.
+  function autoFormatDateTyping(value, previousValue) {
+    let raw = value.replace(/[^0-9/]/g, '');
+    if (value.length < previousValue.length) return raw; // borrando: no reformatear
+
+    let parts = raw.split('/');
+    if (parts.length === 1 && parts[0].length >= 2) {
+      parts = [parts[0].slice(0, 2), parts[0].slice(2)];
+    }
+    if (parts.length === 2 && parts[1].length >= 2) {
+      parts = [parts[0], parts[1].slice(0, 2), parts[1].slice(2)];
+    }
+    if (parts.length > 3) parts = parts.slice(0, 3);
+    if (parts[0] !== undefined) parts[0] = parts[0].slice(0, 2);
+    if (parts[1] !== undefined) parts[1] = parts[1].slice(0, 2);
+    if (parts[2] !== undefined) parts[2] = parts[2].slice(0, 4);
+    return parts.join('/');
+  }
+
+  // Si día o mes quedaron con un solo dígito (ej. "9/4/2026"), los completa a
+  // dos dígitos ("09/04/2026"). El año nunca se rellena (siempre son 4 dígitos).
+  function normalizeDateSegments(raw) {
+    const parts = raw.split('/');
+    if (parts.length !== 3) return raw;
+    let [d, m, y] = parts;
+    if (d.length === 1) d = '0' + d;
+    if (m.length === 1) m = '0' + m;
+    return `${d}/${m}/${y}`;
   }
 
   function formatCreatedAt(iso) {
@@ -140,13 +178,23 @@
     updateLabelPreview();
   });
 
-  // La fecha ya NO se genera automáticamente: el usuario la escribe a mano.
-  // Sólo se permite dígitos y "/" mientras escribe; el formato completo
-  // (DD/MM/AAAA) se valida antes de Generar/Imprimir.
+  // Fecha automática (hoy) pero editable: mientras se escribe, se auto-inserta
+  // "/" conforme avanzan los dígitos. Al salir del campo se completan con cero
+  // los segmentos de un solo dígito (día/mes), nunca el año.
+  let previousDateValue = dateInput.value;
   dateInput.addEventListener('input', () => {
-    const filtered = dateInput.value.replace(/[^0-9/]/g, '');
-    if (filtered !== dateInput.value) dateInput.value = filtered;
+    const formatted = autoFormatDateTyping(dateInput.value, previousDateValue);
+    if (formatted !== dateInput.value) dateInput.value = formatted;
+    previousDateValue = dateInput.value;
     updateLabelPreview();
+  });
+  dateInput.addEventListener('blur', () => {
+    const normalized = normalizeDateSegments(dateInput.value.trim());
+    if (normalized !== dateInput.value) {
+      dateInput.value = normalized;
+      previousDateValue = normalized;
+      updateLabelPreviewImmediate();
+    }
   });
 
   // ---- Mensajes de formulario ----
@@ -156,22 +204,28 @@
     formMsg.classList.toggle('ok', !isError && Boolean(text));
   }
 
-  // Validación compartida (Generar e Imprimir la requieren por igual). La
-  // fecha ya no se autocompleta: debe existir y cumplir DD/MM/AAAA.
+  // Validación compartida (Generar e Imprimir). El número de orden sigue
+  // siendo obligatorio; la fecha es OPCIONAL de editar — si quedó vacía o con
+  // un formato que no se pudo normalizar, se usa la fecha de hoy en automático
+  // en vez de bloquear.
   function validateOrderAndDate() {
     const orderNumber = normalizeOrderValue(orderInput.value.trim());
-    const labelDate = dateInput.value.trim();
 
     if (!orderNumber || !ORDER_PATTERN.test(orderNumber)) {
       setFormMsg('El número de orden solo admite letras, números y guiones (ej. FBA12345, FFT-2026-001).', true);
       orderInput.focus();
       return null;
     }
+
+    let labelDate = normalizeDateSegments(dateInput.value.trim());
     if (!labelDate || !DATE_PATTERN.test(labelDate)) {
-      setFormMsg('Ingresa la fecha en formato DD/MM/AAAA.', true);
-      dateInput.focus();
-      return null;
+      labelDate = todayDisplayString();
     }
+    if (dateInput.value !== labelDate) {
+      dateInput.value = labelDate;
+      updateLabelPreviewImmediate();
+    }
+
     return { orderNumber, labelDate };
   }
 
@@ -243,7 +297,8 @@
   // ---- Nueva etiqueta ----
   btnNew.addEventListener('click', () => {
     orderInput.value = '';
-    dateInput.value = ''; // la fecha ya no se autocompleta: queda vacía para escribirla a mano
+    dateInput.value = todayDisplayString(); // automática, pero el usuario puede cambiarla
+    previousDateValue = dateInput.value;
     setFormMsg('', false);
     updateLabelPreviewImmediate();
     closePreview();
@@ -375,7 +430,8 @@
   });
 
   // ---- Inicialización ----
-  // La fecha ya no se autocompleta: queda vacía hasta que el usuario la escriba.
+  dateInput.value = todayDisplayString(); // automática; el usuario puede editarla si quiere
+  previousDateValue = dateInput.value;
   updateLabelPreviewImmediate();
   fetchHistory('');
   orderInput.focus();
