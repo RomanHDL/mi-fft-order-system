@@ -10,6 +10,7 @@
   'use strict';
 
   const ORDER_PATTERN = /^[A-Za-z0-9-]+$/;
+  const DATE_PATTERN = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
   const QR_DEBOUNCE_MS = 200;
 
   // ---- Referencias del DOM ----
@@ -58,13 +59,8 @@
     }, { once: true });
   });
 
-  // ---- Utilidades de fecha (hora LOCAL del dispositivo, sin desfase UTC) ----
+  // ---- Utilidades de fecha ----
   function pad2(n) { return n.toString().padStart(2, '0'); }
-
-  function todayDisplayString() {
-    const d = new Date();
-    return `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}/${d.getFullYear()}`;
-  }
 
   function todayFileToken() {
     const d = new Date();
@@ -144,6 +140,15 @@
     updateLabelPreview();
   });
 
+  // La fecha ya NO se genera automáticamente: el usuario la escribe a mano.
+  // Sólo se permite dígitos y "/" mientras escribe; el formato completo
+  // (DD/MM/AAAA) se valida antes de Generar/Imprimir.
+  dateInput.addEventListener('input', () => {
+    const filtered = dateInput.value.replace(/[^0-9/]/g, '');
+    if (filtered !== dateInput.value) dateInput.value = filtered;
+    updateLabelPreview();
+  });
+
   // ---- Mensajes de formulario ----
   function setFormMsg(text, isError) {
     formMsg.textContent = text || '';
@@ -151,23 +156,33 @@
     formMsg.classList.toggle('ok', !isError && Boolean(text));
   }
 
-  // ---- Generar (POST /api/labels — sin cambios de endpoint/lógica) ----
-  labelForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    if (btnGenerate.disabled) return; // evita doble envío por doble clic/Enter
-
+  // Validación compartida (Generar e Imprimir la requieren por igual). La
+  // fecha ya no se autocompleta: debe existir y cumplir DD/MM/AAAA.
+  function validateOrderAndDate() {
     const orderNumber = normalizeOrderValue(orderInput.value.trim());
     const labelDate = dateInput.value.trim();
 
     if (!orderNumber || !ORDER_PATTERN.test(orderNumber)) {
       setFormMsg('El número de orden solo admite letras, números y guiones (ej. FBA12345, FFT-2026-001).', true);
       orderInput.focus();
-      return;
+      return null;
     }
-    if (!labelDate) {
-      setFormMsg('La fecha es requerida.', true);
-      return;
+    if (!labelDate || !DATE_PATTERN.test(labelDate)) {
+      setFormMsg('Ingresa la fecha en formato DD/MM/AAAA.', true);
+      dateInput.focus();
+      return null;
     }
+    return { orderNumber, labelDate };
+  }
+
+  // ---- Generar (POST /api/labels — sin cambios de endpoint/lógica) ----
+  labelForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (btnGenerate.disabled) return; // evita doble envío por doble clic/Enter
+
+    const validated = validateOrderAndDate();
+    if (!validated) return; // no guarda: mantiene lo que el usuario ya escribió
+    const { orderNumber, labelDate } = validated;
 
     btnGenerate.disabled = true;
     const originalLabel = btnGenerate.textContent;
@@ -217,6 +232,7 @@
   }
 
   async function handlePrintClick() {
+    if (!validateOrderAndDate()) return; // no imprime con datos vacíos/inválidos
     await waitForPrintReady();
     window.print();
   }
@@ -227,7 +243,7 @@
   // ---- Nueva etiqueta ----
   btnNew.addEventListener('click', () => {
     orderInput.value = '';
-    dateInput.value = todayDisplayString();
+    dateInput.value = ''; // la fecha ya no se autocompleta: queda vacía para escribirla a mano
     setFormMsg('', false);
     updateLabelPreviewImmediate();
     closePreview();
@@ -359,7 +375,7 @@
   });
 
   // ---- Inicialización ----
-  dateInput.value = todayDisplayString();
+  // La fecha ya no se autocompleta: queda vacía hasta que el usuario la escriba.
   updateLabelPreviewImmediate();
   fetchHistory('');
   orderInput.focus();

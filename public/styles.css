@@ -142,12 +142,6 @@ h1, h2, h3 { margin: 0; }
   border-color: var(--brand-blue);
 }
 
-#label-date[readonly] {
-  background: var(--gray-100);
-  color: var(--gray-700);
-  cursor: default;
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -300,7 +294,7 @@ body.preview-mode .print-area {
   height: 100%;
   background: var(--white);
   border: 1px solid var(--gray-300);
-  padding: 2.7cqw 6cqw 3.2cqw;
+  padding: 2.7cqw 6cqw 4.1cqw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -369,24 +363,24 @@ body.preview-mode .print-area {
 .fecha-block {
   text-align: center;
   justify-self: start;
-  margin-top: 3cqw; /* un poco más abajo que CALIDAD, según lo pedido */
-  margin-left: 2.7cqw; /* un poco más a la derecha respecto a su posición anterior */
+  margin-top: -2.5cqw; /* sube ligeramente respecto a la posición anterior */
+  margin-left: 3.6cqw; /* un poco más a la derecha */
 }
 
 /* Orden pedido: VALOR arriba, línea, y la palabra FECHA debajo de la línea. */
 .fecha-value {
-  font-size: 2.25cqw;
+  font-size: 2.9cqw;
   font-weight: 600;
 }
 
 .fecha-line {
-  width: 17cqw;
+  width: 19cqw;
   margin: 0.6cqw auto 0;
   border-bottom: 1.5px solid var(--black);
 }
 
 .fecha-caption {
-  font-size: 2.6cqw;
+  font-size: 3.1cqw;
   font-weight: 800;
   letter-spacing: 0.05em;
   margin-top: 0.8cqw;
@@ -399,6 +393,7 @@ body.preview-mode .print-area {
   align-self: center; /* sin caption arriba: se centra en la fila, no queda pegado arriba */
   position: relative;
   right: 1.8cqw; /* ligeramente a la izquierda del centro exacto, según lo pedido */
+  top: -4cqw; /* sube el QR para dejar más margen de seguridad al imprimir */
 }
 
 .qr-canvas {
@@ -420,19 +415,21 @@ body.preview-mode .print-area {
   text-align: center;
   justify-self: end;
   margin-right: 3.6cqw; /* un poco más a la izquierda respecto al borde derecho */
+  position: relative;
+  top: -3.6cqw; /* sube para alinearse con el QR */
 }
 
 /* Orden pedido: primero el cuadro, la palabra CALIDAD debajo. */
-/* Cuadro para sello/firma física del personal de calidad — casi cuadrado. */
+/* Cuadro para sello/firma física del personal de calidad — casi cuadrado, más grande. */
 .calidad-box {
-  width: 14.5cqw;
-  height: 13.5cqw;
+  width: 18cqw;
+  height: 16.2cqw;
   margin: 0 auto;
-  border: 1.5px solid var(--black);
+  border: 1.75px solid var(--black);
 }
 
 .calidad-caption {
-  font-size: 2.6cqw;
+  font-size: 3cqw;
   font-weight: 800;
   letter-spacing: 0.05em;
   margin-top: 1.2cqw;
@@ -646,7 +643,7 @@ body.preview-mode .print-area {
     width: 11in;
     height: 8.5in;
     margin: 0;
-    padding: 0.3in 0.7in 0.35in;
+    padding: 0.3in 0.7in 0.45in;
     border: none;
     overflow: hidden;
     box-sizing: border-box;
@@ -663,13 +660,13 @@ body.preview-mode .print-area {
   .order-block { margin-bottom: 0.26in; }
   .order-value { font-size: 32pt; min-height: 0.5in; }
   .label-bottom { grid-template-columns: 1fr auto 1fr; gap: 0.3in; }
-  .fecha-block { margin-top: 0.22in; margin-left: 0.3in; }
-  .fecha-value { font-size: 13pt; }
-  .fecha-line { width: 1.9in; margin: 0.06in auto 0; }
-  .fecha-caption { font-size: 15pt; margin-top: 0.08in; }
-  .qr-block { right: 0.2in; }
+  .fecha-block { margin-top: -0.18in; margin-left: 0.4in; }
+  .fecha-value { font-size: 17pt; }
+  .fecha-line { width: 2.1in; margin: 0.06in auto 0; }
+  .fecha-caption { font-size: 18pt; margin-top: 0.08in; }
+  .qr-block { right: 0.2in; top: -0.45in; }
   .qr-canvas { width: 2.8in; height: 2.8in; }
-  .calidad-block { margin-right: 0.4in; }
-  .calidad-box { width: 1.6in; height: 1.5in; margin: 0 auto; }
-  .calidad-caption { font-size: 15pt; margin-top: 0.08in; }
+  .calidad-block { margin-right: 0.4in; top: -0.4in; }
+  .calidad-box { width: 2in; height: 1.8in; margin: 0 auto; }
+  .calidad-caption { font-size: 17pt; margin-top: 0.08in; }
 }

@@ -47,7 +47,9 @@
         <div class="field field-date">
           <label for="label-date">Fecha</label>
           <input id="label-date" name="labelDate" type="text"
-                 readonly aria-readonly="true" tabindex="-1">
+                 placeholder="DD/MM/AAAA" autocomplete="off" spellcheck="false"
+                 inputmode="numeric" maxlength="10" required
+                 aria-describedby="order-hint">
         </div>
 
         <div class="actions">
@@ -59,7 +61,7 @@
       </form>
 
       <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
-      <p class="hint" id="order-hint">Letras, números y guiones. Se guarda en MAYÚSCULAS. Ej: FBA12345 · FFT-2026-001 · A1B2C3</p>
+      <p class="hint" id="order-hint">No. de Orden: letras, números y guiones (MAYÚSCULAS). Fecha: escribe manualmente en formato DD/MM/AAAA.</p>
     </section>
 
     <!-- =================== VISTA PREVIA DE LA HOJA =================== -->
