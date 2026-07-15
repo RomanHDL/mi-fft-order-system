@@ -321,7 +321,7 @@ body.preview-mode .print-area {
   align-self: flex-start; /* esquina superior IZQUIERDA, no centrado */
   height: 6cqw;
   width: auto;
-  margin-bottom: 4cqw;
+  margin-bottom: 6.5cqw;
 }
 
 .label-title {
@@ -353,11 +353,13 @@ body.preview-mode .print-area {
   word-break: break-all;
 }
 
+/* align-items:start (no "end") para que las leyendas FECHA/CALIDAD queden
+   en la misma línea horizontal, sin importar la altura de cada columna. */
 .label-bottom {
   width: 100%;
   display: grid;
   grid-template-columns: 1.2fr 1.4fr 1.4fr;
-  align-items: end;
+  align-items: start;
   gap: 2.5cqw;
   margin-top: auto;
 }
@@ -368,7 +370,7 @@ body.preview-mode .print-area {
   font-size: 2.6cqw;
   font-weight: 800;
   letter-spacing: 0.05em;
-  margin-bottom: 3.5cqw;
+  margin-bottom: 1.2cqw;
 }
 
 .fecha-value {
@@ -382,11 +384,12 @@ body.preview-mode .print-area {
 .qr-block {
   display: flex;
   justify-content: center;
+  align-self: center; /* sin caption arriba: se centra en la fila, no queda pegado arriba */
 }
 
 .qr-canvas {
-  width: 16cqw;
-  height: 16cqw;
+  width: 20cqw;
+  height: 20cqw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -405,7 +408,7 @@ body.preview-mode .print-area {
   font-size: 2.6cqw;
   font-weight: 800;
   letter-spacing: 0.05em;
-  margin-bottom: 1cqw;
+  margin-bottom: 1.2cqw;
 }
 
 /* Cuadro grande para sello/firma física del personal de calidad (un poco más ancho que alto). */
@@ -636,14 +639,14 @@ body.preview-mode .print-area {
     break-inside: avoid-page;
   }
 
-  .label-logo { height: 0.6in; margin-bottom: 0.36in; }
+  .label-logo { height: 0.6in; margin-bottom: 0.58in; }
   .label-title { font-size: 38pt; margin: 0 0 0.26in; }
   .order-block { margin-bottom: 0.26in; }
   .order-value { font-size: 42pt; min-height: 0.65in; }
   .label-bottom { grid-template-columns: 1.7in 1fr 2.8in; gap: 0.3in; }
-  .fecha-caption { font-size: 15pt; margin-bottom: 0.3in; }
+  .fecha-caption { font-size: 15pt; margin-bottom: 0.1in; }
   .fecha-value { font-size: 15pt; min-width: 1.9in; padding-bottom: 0.03in; }
-  .qr-canvas { width: 1.7in; height: 1.7in; }
-  .calidad-caption { font-size: 15pt; margin-bottom: 0.08in; }
+  .qr-canvas { width: 2.1in; height: 2.1in; }
+  .calidad-caption { font-size: 15pt; margin-bottom: 0.1in; }
   .calidad-box { width: 2.6in; height: 2in; margin: 0 auto; }
 }
