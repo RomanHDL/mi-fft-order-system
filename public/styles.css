@@ -300,7 +300,7 @@ body.preview-mode .print-area {
   height: 100%;
   background: var(--white);
   border: 1px solid var(--gray-300);
-  padding: 3.5cqw 6cqw 4.5cqw;
+  padding: 2.7cqw 6cqw 3.2cqw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -321,17 +321,17 @@ body.preview-mode .print-area {
   align-self: flex-start; /* esquina superior IZQUIERDA, no centrado */
   height: 6cqw;
   width: auto;
-  margin-bottom: 8cqw;
+  margin-bottom: 5.5cqw;
 }
 
 .label-title {
   width: 100%;
-  font-size: 5.5cqw;
+  font-size: 7.5cqw;
   font-weight: 800;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  line-height: 1.15;
+  line-height: 1.05;
   margin: 0 0 3cqw;
 }
 
@@ -343,10 +343,10 @@ body.preview-mode .print-area {
 
 /* Sin línea inferior: el valor grande y en negritas es suficiente indicador. */
 .order-value {
-  font-size: 7.2cqw;
+  font-size: 5.5cqw;
   font-weight: 800;
   letter-spacing: 0.03em;
-  min-height: 8cqw;
+  min-height: 6.5cqw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -367,24 +367,29 @@ body.preview-mode .print-area {
 }
 
 .fecha-block {
-  text-align: left;
+  text-align: center;
   justify-self: start;
   margin-top: 3cqw; /* un poco más abajo que CALIDAD, según lo pedido */
+  margin-left: 2.7cqw; /* un poco más a la derecha respecto a su posición anterior */
+}
+
+/* Orden pedido: VALOR arriba, línea, y la palabra FECHA debajo de la línea. */
+.fecha-value {
+  font-size: 2.25cqw;
+  font-weight: 600;
+}
+
+.fecha-line {
+  width: 17cqw;
+  margin: 0.6cqw auto 0;
+  border-bottom: 1.5px solid var(--black);
 }
 
 .fecha-caption {
   font-size: 2.6cqw;
   font-weight: 800;
   letter-spacing: 0.05em;
-  margin-bottom: 1.2cqw;
-}
-
-.fecha-value {
-  font-size: 2.6cqw;
-  font-weight: 600;
-  border-bottom: 1.5px solid var(--black);
-  min-width: 60%;
-  padding-bottom: 0.6cqw;
+  margin-top: 0.8cqw;
 }
 
 .qr-block {
@@ -392,11 +397,13 @@ body.preview-mode .print-area {
   justify-content: center;
   justify-self: center;
   align-self: center; /* sin caption arriba: se centra en la fila, no queda pegado arriba */
+  position: relative;
+  right: 1.8cqw; /* ligeramente a la izquierda del centro exacto, según lo pedido */
 }
 
 .qr-canvas {
-  width: 24cqw;
-  height: 24cqw;
+  width: 26cqw;
+  height: 26cqw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -409,21 +416,26 @@ body.preview-mode .print-area {
   image-rendering: pixelated;
 }
 
-.calidad-block { text-align: center; justify-self: end; }
+.calidad-block {
+  text-align: center;
+  justify-self: end;
+  margin-right: 3.6cqw; /* un poco más a la izquierda respecto al borde derecho */
+}
+
+/* Orden pedido: primero el cuadro, la palabra CALIDAD debajo. */
+/* Cuadro para sello/firma física del personal de calidad — casi cuadrado. */
+.calidad-box {
+  width: 14.5cqw;
+  height: 13.5cqw;
+  margin: 0 auto;
+  border: 1.5px solid var(--black);
+}
 
 .calidad-caption {
   font-size: 2.6cqw;
   font-weight: 800;
   letter-spacing: 0.05em;
-  margin-bottom: 1.2cqw;
-}
-
-/* Cuadro grande para sello/firma física del personal de calidad (un poco más ancho que alto). */
-.calidad-box {
-  width: 24cqw;
-  height: 18cqw;
-  margin: 0 auto;
-  border: 1.5px solid var(--black);
+  margin-top: 1.2cqw;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -634,7 +646,7 @@ body.preview-mode .print-area {
     width: 11in;
     height: 8.5in;
     margin: 0;
-    padding: 0.4in 0.7in 0.5in;
+    padding: 0.3in 0.7in 0.35in;
     border: none;
     overflow: hidden;
     box-sizing: border-box;
@@ -646,15 +658,18 @@ body.preview-mode .print-area {
     break-inside: avoid-page;
   }
 
-  .label-logo { height: 0.6in; margin-bottom: 0.72in; }
-  .label-title { font-size: 32pt; margin: 0 0 0.26in; }
+  .label-logo { height: 0.6in; margin-bottom: 0.5in; }
+  .label-title { font-size: 44pt; margin: 0 0 0.26in; }
   .order-block { margin-bottom: 0.26in; }
-  .order-value { font-size: 42pt; min-height: 0.65in; }
+  .order-value { font-size: 32pt; min-height: 0.5in; }
   .label-bottom { grid-template-columns: 1fr auto 1fr; gap: 0.3in; }
-  .fecha-block { margin-top: 0.22in; }
-  .fecha-caption { font-size: 15pt; margin-bottom: 0.1in; }
-  .fecha-value { font-size: 15pt; min-width: 1.9in; padding-bottom: 0.03in; }
-  .qr-canvas { width: 2.6in; height: 2.6in; }
-  .calidad-caption { font-size: 15pt; margin-bottom: 0.1in; }
-  .calidad-box { width: 2.6in; height: 2in; margin: 0 auto; }
+  .fecha-block { margin-top: 0.22in; margin-left: 0.3in; }
+  .fecha-value { font-size: 13pt; }
+  .fecha-line { width: 1.9in; margin: 0.06in auto 0; }
+  .fecha-caption { font-size: 15pt; margin-top: 0.08in; }
+  .qr-block { right: 0.2in; }
+  .qr-canvas { width: 2.8in; height: 2.8in; }
+  .calidad-block { margin-right: 0.4in; }
+  .calidad-box { width: 1.6in; height: 1.5in; margin: 0 auto; }
+  .calidad-caption { font-size: 15pt; margin-top: 0.08in; }
 }

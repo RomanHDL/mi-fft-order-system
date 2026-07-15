@@ -100,8 +100,10 @@
       qrCanvasEl.innerHTML = '';
       qrInstance = new QRCode(qrCanvasEl, {
         text,
-        width: 260,
-        height: 260,
+        // Resolución nativa alta (no sólo el tamaño en CSS) para que el QR
+        // no se vea borroso al imprimirse más grande en la hoja Carta.
+        width: 480,
+        height: 480,
         correctLevel: QRCode.CorrectLevel.M,
       });
     } else {
@@ -202,8 +204,25 @@
   btnPreviewClose.addEventListener('click', closePreview);
 
   // ---- Imprimir ----
-  btnPrint.addEventListener('click', () => window.print());
-  btnPreviewPrint.addEventListener('click', () => window.print());
+  // Espera a que el logo (imagen real) termine de cargar antes de imprimir,
+  // para evitar que salga en blanco en la primera impresión. El QR ya se
+  // dibuja de forma síncrona en el DOM, no requiere espera adicional.
+  function waitForPrintReady() {
+    const logoImg = document.querySelector('.print-area .label-logo');
+    if (!logoImg || logoImg.complete) return Promise.resolve();
+    return new Promise((resolve) => {
+      logoImg.addEventListener('load', resolve, { once: true });
+      logoImg.addEventListener('error', resolve, { once: true });
+    });
+  }
+
+  async function handlePrintClick() {
+    await waitForPrintReady();
+    window.print();
+  }
+
+  btnPrint.addEventListener('click', handlePrintClick);
+  btnPreviewPrint.addEventListener('click', handlePrintClick);
 
   // ---- Nueva etiqueta ----
   btnNew.addEventListener('click', () => {
