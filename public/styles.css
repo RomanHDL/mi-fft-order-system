@@ -294,7 +294,7 @@ body.preview-mode .print-area {
   height: 100%;
   background: var(--white);
   border: 1px solid var(--gray-300);
-  padding: 2.7cqw 3.6cqw 4.1cqw;
+  padding: 2.7cqw 3.6cqw 6cqw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -316,7 +316,7 @@ body.preview-mode .print-area {
   width: 15cqw;
   height: auto; /* alto automático: conserva la proporción real, no deforma */
   margin-top: 1.6cqw; /* baja el logo un poco, casi no se veía pegado al borde */
-  margin-bottom: 11cqw; /* baja el título respecto a su posición anterior */
+  margin-bottom: 8cqw; /* logo se queda fijo; el resto sube reduciendo este espacio */
 }
 
 .label-title {
@@ -646,7 +646,7 @@ body.preview-mode .print-area {
     width: 11in;
     height: 8.5in;
     margin: 0;
-    padding: 0.3in 0.42in 0.45in;
+    padding: 0.3in 0.42in 0.65in;
     border: none;
     overflow: hidden;
     box-sizing: border-box;
@@ -658,7 +658,7 @@ body.preview-mode .print-area {
     break-inside: avoid-page;
   }
 
-  .label-logo { width: 1.65in; height: auto; margin-top: 0.18in; margin-bottom: 1in; }
+  .label-logo { width: 1.65in; height: auto; margin-top: 0.18in; margin-bottom: 0.75in; }
   .label-title { font-size: 48pt; margin: 0 0 0.45in; }
   .order-block { margin-bottom: 0.26in; }
   .order-value { font-size: 32pt; min-height: 0.5in; }
