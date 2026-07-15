@@ -92,10 +92,9 @@ app.post('/api/labels', async (req, res) => {
     }
 
     const trimmedOrder = orderNumber.trim();
+    // La fecha es opcional: si no se captura, se guarda vacía (no se fuerza
+    // la fecha del día ni se rechaza la solicitud).
     const date = (labelDate && String(labelDate).trim()) || '';
-    if (!date) {
-      return res.status(400).json({ success: false, error: 'La fecha es requerida.' });
-    }
 
     const rows = await sql`
       INSERT INTO labels (order_number, label_date, created_by)

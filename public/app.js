@@ -205,9 +205,9 @@
   }
 
   // Validación compartida (Generar e Imprimir). El número de orden sigue
-  // siendo obligatorio; la fecha es OPCIONAL de editar — si quedó vacía o con
-  // un formato que no se pudo normalizar, se usa la fecha de hoy en automático
-  // en vez de bloquear.
+  // siendo obligatorio. La fecha es realmente OPCIONAL: puede quedar vacía
+  // (a veces la hoja no es del día en que se guarda) y eso NO bloquea nada —
+  // sólo se valida el formato si el usuario sí escribió algo.
   function validateOrderAndDate() {
     const orderNumber = normalizeOrderValue(orderInput.value.trim());
 
@@ -217,13 +217,19 @@
       return null;
     }
 
-    let labelDate = normalizeDateSegments(dateInput.value.trim());
-    if (!labelDate || !DATE_PATTERN.test(labelDate)) {
-      labelDate = todayDisplayString();
-    }
-    if (dateInput.value !== labelDate) {
-      dateInput.value = labelDate;
-      updateLabelPreviewImmediate();
+    const rawDate = dateInput.value.trim();
+    let labelDate = '';
+    if (rawDate) {
+      labelDate = normalizeDateSegments(rawDate);
+      if (!DATE_PATTERN.test(labelDate)) {
+        setFormMsg('La fecha debe tener formato DD/MM/AAAA, o déjala vacía si no aplica.', true);
+        dateInput.focus();
+        return null;
+      }
+      if (dateInput.value !== labelDate) {
+        dateInput.value = labelDate;
+        updateLabelPreviewImmediate();
+      }
     }
 
     return { orderNumber, labelDate };
