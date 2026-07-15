@@ -321,12 +321,12 @@ body.preview-mode .print-area {
   align-self: flex-start; /* esquina superior IZQUIERDA, no centrado */
   height: 6cqw;
   width: auto;
-  margin-bottom: 6.5cqw;
+  margin-bottom: 8cqw;
 }
 
 .label-title {
   width: 100%;
-  font-size: 6.5cqw;
+  font-size: 5.5cqw;
   font-weight: 800;
   text-align: center;
   text-transform: uppercase;
@@ -353,18 +353,24 @@ body.preview-mode .print-area {
   word-break: break-all;
 }
 
-/* align-items:start (no "end") para que las leyendas FECHA/CALIDAD queden
-   en la misma línea horizontal, sin importar la altura de cada columna. */
+/* grid-template-columns: 1fr auto 1fr — el QR (columna central, ancho de
+   contenido) queda matemáticamente centrado en TODA la hoja porque las dos
+   columnas laterales son iguales (1fr), sin importar cuánto ocupen FECHA
+   o CALIDAD a los lados. */
 .label-bottom {
   width: 100%;
   display: grid;
-  grid-template-columns: 1.2fr 1.4fr 1.4fr;
+  grid-template-columns: 1fr auto 1fr;
   align-items: start;
   gap: 2.5cqw;
   margin-top: auto;
 }
 
-.fecha-block { text-align: left; }
+.fecha-block {
+  text-align: left;
+  justify-self: start;
+  margin-top: 3cqw; /* un poco más abajo que CALIDAD, según lo pedido */
+}
 
 .fecha-caption {
   font-size: 2.6cqw;
@@ -384,12 +390,13 @@ body.preview-mode .print-area {
 .qr-block {
   display: flex;
   justify-content: center;
+  justify-self: center;
   align-self: center; /* sin caption arriba: se centra en la fila, no queda pegado arriba */
 }
 
 .qr-canvas {
-  width: 20cqw;
-  height: 20cqw;
+  width: 24cqw;
+  height: 24cqw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -402,7 +409,7 @@ body.preview-mode .print-area {
   image-rendering: pixelated;
 }
 
-.calidad-block { text-align: center; }
+.calidad-block { text-align: center; justify-self: end; }
 
 .calidad-caption {
   font-size: 2.6cqw;
@@ -639,14 +646,15 @@ body.preview-mode .print-area {
     break-inside: avoid-page;
   }
 
-  .label-logo { height: 0.6in; margin-bottom: 0.58in; }
-  .label-title { font-size: 38pt; margin: 0 0 0.26in; }
+  .label-logo { height: 0.6in; margin-bottom: 0.72in; }
+  .label-title { font-size: 32pt; margin: 0 0 0.26in; }
   .order-block { margin-bottom: 0.26in; }
   .order-value { font-size: 42pt; min-height: 0.65in; }
-  .label-bottom { grid-template-columns: 1.7in 1fr 2.8in; gap: 0.3in; }
+  .label-bottom { grid-template-columns: 1fr auto 1fr; gap: 0.3in; }
+  .fecha-block { margin-top: 0.22in; }
   .fecha-caption { font-size: 15pt; margin-bottom: 0.1in; }
   .fecha-value { font-size: 15pt; min-width: 1.9in; padding-bottom: 0.03in; }
-  .qr-canvas { width: 2.1in; height: 2.1in; }
+  .qr-canvas { width: 2.6in; height: 2.6in; }
   .calidad-caption { font-size: 15pt; margin-bottom: 0.1in; }
   .calidad-box { width: 2.6in; height: 2in; margin: 0 auto; }
 }
