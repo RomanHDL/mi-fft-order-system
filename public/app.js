@@ -3,7 +3,10 @@
    Sin frameworks, JS moderno de navegador. QRCode y XLSX se cargan
    localmente desde /vendor (sin CDN, apto para piso de producción offline).
 
-   Endpoints (sin cambios): GET/POST/DELETE /api/labels — ver api/index.js
+   Endpoints: GET/POST/DELETE /api/labels — ver api/index.js. El POST ahora
+   representa un EVENTO DE IMPRESIÓN (no la creación de la etiqueta): se
+   llama en el instante en que se invoca window.print(), tanto desde
+   "Imprimir" como desde "Reimprimir".
    ========================================================================== */
 
 (function () {
@@ -18,6 +21,7 @@
   const dateInput = document.getElementById('label-date');
   const orderValueDisplay = document.getElementById('order-value-display');
   const fechaValueDisplay = document.getElementById('fecha-value-display');
+  const printTimestampEl = document.getElementById('print-timestamp');
   const qrCanvasEl = document.getElementById('qr-canvas');
 
   const labelForm = document.getElementById('label-form');
@@ -47,6 +51,12 @@
   let qrDebounceTimer = null;
   let currentLabels = [];
   let searchTimer = null;
+  // Evita registrar/lanzar dos impresiones por el mismo clic (doble clic,
+  // Enter repetido, o el evento disparándose más de una vez).
+  let printing = false;
+  // Posición de scroll de la página guardada al abrir el historial, para
+  // restaurarla exactamente al cerrarlo.
+  let savedScrollY = 0;
 
   // ---- Aviso técnico si falta el logo (el componente queda listo para
   // cargarlo automáticamente en cuanto el archivo exista en /public). ----
@@ -105,10 +115,25 @@
     return `${d}/${m}/${y}`;
   }
 
-  function formatCreatedAt(iso) {
-    const d = new Date(iso);
-    if (isNaN(d.getTime())) return iso;
-    return `${pad2(d.getDate())}/${pad2(d.getMonth() + 1)}/${d.getFullYear()} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  // Formatea una marca de tiempo (impresión real o, para registros heredados,
+  // created_at) en horario de Monterrey/Escobedo, es-MX: "20/07/2026 08:13".
+  // Valor vacío/ inválido -> '' (nunca "Invalid Date" en pantalla).
+  function formatPrintStamp(value) {
+    if (!value) return '';
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return '';
+    const parts = new Intl.DateTimeFormat('es-MX', {
+      timeZone: 'America/Monterrey',
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', hour12: false,
+    }).formatToParts(d);
+    const get = (type) => {
+      const found = parts.find((p) => p.type === type);
+      return found ? found.value : '';
+    };
+    let hour = get('hour');
+    if (hour === '24') hour = '00'; // Intl con hour12:false a veces da "24" en medianoche
+    return `${get('day')}/${get('month')}/${get('year')} ${hour}:${get('minute')}`;
   }
 
   function escapeHtml(str) {
@@ -234,36 +259,16 @@
     return { orderNumber, labelDate };
   }
 
-  // ---- Generar (POST /api/labels — sin cambios de endpoint/lógica) ----
-  labelForm.addEventListener('submit', async (e) => {
+  // ---- Generar ----
+  // El historial ahora registra IMPRESIONES reales, no la creación de la
+  // etiqueta: "Generar" ya no guarda nada en la base de datos, sólo valida
+  // los datos capturados y confirma que la hoja está lista. El registro real
+  // ocurre en doPrint(), al presionar Imprimir/Reimprimir.
+  labelForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    if (btnGenerate.disabled) return; // evita doble envío por doble clic/Enter
-
     const validated = validateOrderAndDate();
-    if (!validated) return; // no guarda: mantiene lo que el usuario ya escribió
-    const { orderNumber, labelDate } = validated;
-
-    btnGenerate.disabled = true;
-    const originalLabel = btnGenerate.textContent;
-    btnGenerate.textContent = 'Guardando…';
-    setFormMsg('Guardando…', false);
-    try {
-      const res = await fetch('/api/labels', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderNumber, labelDate }),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.success) throw new Error(data.error || 'No se pudo generar la etiqueta.');
-      setFormMsg('Etiqueta generada y guardada en el historial. Ya puedes imprimirla.', false);
-      fetchHistory(searchInput.value.trim());
-    } catch (err) {
-      console.error('[Generar]', err);
-      setFormMsg(err.message, true);
-    } finally {
-      btnGenerate.disabled = false;
-      btnGenerate.textContent = originalLabel;
-    }
+    if (!validated) return; // mantiene lo que el usuario ya escribió
+    setFormMsg('Etiqueta lista. Presiona Imprimir para generarla y registrarla en el historial.', false);
   });
 
   // ---- Vista previa ----
@@ -290,20 +295,65 @@
     });
   }
 
-  async function handlePrintClick() {
-    if (!validateOrderAndDate()) return; // no imprime con datos vacíos/inválidos
-    await waitForPrintReady();
-    window.print();
+  // Registra el evento de impresión (POST /api/labels) con su propia marca
+  // de tiempo. Si falla la escritura en el historial, la impresión continúa
+  // igual — nunca se le impide imprimir al usuario por un error de red/BD.
+  async function recordPrint(orderNumber, labelDate, printedAtIso, eventType) {
+    try {
+      const res = await fetch('/api/labels', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderNumber, labelDate, printedAt: printedAtIso, eventType }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'No se pudo registrar en el historial.');
+      return true;
+    } catch (err) {
+      console.error('[recordPrint]', err);
+      return false;
+    }
   }
 
-  btnPrint.addEventListener('click', handlePrintClick);
-  btnPreviewPrint.addEventListener('click', handlePrintClick);
+  // Núcleo del flujo de impresión/reimpresión. `eventType` es 'print' (botón
+  // Imprimir) o 'reprint' (Reimprimir desde el historial). La fecha/hora de
+  // impresión se calcula AQUÍ, en el instante exacto de la llamada — nunca se
+  // reutiliza una fecha guardada de Generar/Vista previa/una reimpresión
+  // anterior. `printing` evita registrar o lanzar dos impresiones por el
+  // mismo clic (doble clic, listeners repetidos, solicitudes simultáneas).
+  async function doPrint(eventType) {
+    if (printing) return;
+    const validated = validateOrderAndDate();
+    if (!validated) return; // no imprime con datos inválidos
+    const { orderNumber, labelDate } = validated;
+
+    printing = true;
+    try {
+      const printedAtIso = new Date().toISOString();
+      printTimestampEl.textContent = 'FECHA Y HORA DE IMPRESIÓN: ' + formatPrintStamp(printedAtIso);
+
+      const recorded = await recordPrint(orderNumber, labelDate, printedAtIso, eventType);
+      if (!recorded) {
+        setFormMsg('No se pudo registrar en el historial; la etiqueta se imprimirá igual.', true);
+      }
+
+      await waitForPrintReady();
+      window.print();
+
+      fetchHistory(searchInput.value.trim());
+    } finally {
+      printing = false;
+    }
+  }
+
+  btnPrint.addEventListener('click', () => doPrint('print'));
+  btnPreviewPrint.addEventListener('click', () => doPrint('print'));
 
   // ---- Nueva etiqueta ----
   btnNew.addEventListener('click', () => {
     orderInput.value = '';
     dateInput.value = '';
     previousDateValue = dateInput.value;
+    printTimestampEl.textContent = '';
     setFormMsg('', false);
     updateLabelPreviewImmediate();
     closePreview();
@@ -311,7 +361,23 @@
   });
 
   // ---- Modal de historial ----
+  // Bloquea el scroll de la página de atrás mientras el modal está abierto:
+  // fija el <body> en su posición actual (position:fixed + top negativo) en
+  // vez de sólo poner overflow:hidden, que en iOS/Safari no impide el scroll
+  // táctil. Al cerrar, se restaura exactamente el scroll donde estaba.
+  function lockBodyScroll() {
+    savedScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.classList.add('modal-open');
+  }
+  function unlockBodyScroll() {
+    document.body.classList.remove('modal-open');
+    document.body.style.top = '';
+    window.scrollTo(0, savedScrollY);
+  }
+
   function openHistoryModal() {
+    lockBodyScroll();
     historyModal.classList.remove('hidden');
     historyBackdrop.classList.remove('hidden');
     fetchHistory(searchInput.value.trim());
@@ -320,7 +386,11 @@
   function closeHistoryModal() {
     historyModal.classList.add('hidden');
     historyBackdrop.classList.add('hidden');
-    btnHistory.focus();
+    unlockBodyScroll();
+    // preventScroll: true — un focus() normal desplaza la página para poner
+    // el botón a la vista, deshaciendo la posición de scroll recién
+    // restaurada (Req 1.4: "la página debe regresar EXACTAMENTE").
+    btnHistory.focus({ preventScroll: true });
   }
   btnHistory.addEventListener('click', openHistoryModal);
   btnCloseHistory.addEventListener('click', closeHistoryModal);
@@ -335,7 +405,7 @@
     }
   });
 
-  // ---- Historial (GET/DELETE /api/labels — sin cambios de endpoint/lógica) ----
+  // ---- Historial (GET/DELETE /api/labels) ----
   async function fetchHistory(search) {
     try {
       const url = '/api/labels' + (search ? '?search=' + encodeURIComponent(search) : '');
@@ -366,10 +436,16 @@
     const frag = document.createDocumentFragment();
     labels.forEach((label) => {
       const tr = document.createElement('tr');
+      // Registros heredados (de antes de este cambio) no tienen printed_at:
+      // se muestran con su created_at, marcados como "(heredado)" — nunca se
+      // afirma que fueron una impresión confirmada.
+      const printedCell = label.printed_at
+        ? escapeHtml(formatPrintStamp(label.printed_at))
+        : `${escapeHtml(formatPrintStamp(label.created_at))} <span class="legacy-tag">(heredado)</span>`;
       tr.innerHTML = `
         <td>${escapeHtml(label.order_number)}</td>
         <td>${escapeHtml(label.label_date)}</td>
-        <td>${formatCreatedAt(label.created_at)}</td>
+        <td>${printedCell}</td>
         <td class="row-actions">
           <button type="button" class="link-btn" data-action="reprint" data-id="${label.id}">Reimprimir</button>
           <button type="button" class="link-btn danger" data-action="delete" data-id="${label.id}">Eliminar</button>
@@ -389,10 +465,15 @@
     if (!label) return;
 
     if (btn.dataset.action === 'reprint') {
-      orderInput.value = label.order_number;
-      dateInput.value = label.label_date;
+      // Reimprimir carga los datos exactos de esa etiqueta, cierra el
+      // historial e imprime de inmediato con una fecha/hora nueva — no abre
+      // sólo la vista previa. doPrint() ya protege contra doble clic
+      // (bandera `printing`), así que un segundo clic aquí no duplica el evento.
+      orderInput.value = label.order_number || '';
+      dateInput.value = label.label_date || '';
+      updateLabelPreviewImmediate();
       closeHistoryModal();
-      openPreview();
+      doPrint('reprint');
     } else if (btn.dataset.action === 'delete') {
       if (!confirm(`¿Eliminar la etiqueta de la orden "${label.order_number}"? Esta acción no se puede deshacer.`)) return;
       btn.disabled = true;
@@ -416,7 +497,7 @@
 
   btnRefresh.addEventListener('click', () => fetchHistory(searchInput.value.trim()));
 
-  // ---- Exportar a Excel (SheetJS — sin cambios de lógica) ----
+  // ---- Exportar a Excel (SheetJS) ----
   btnExport.addEventListener('click', () => {
     if (!currentLabels.length) {
       alert('No hay etiquetas en el historial actual para exportar.');
@@ -424,8 +505,13 @@
     }
     const rows = currentLabels.map((l) => ({
       'No. de Orden': l.order_number,
-      'Fecha': l.label_date,
-      'Creado': formatCreatedAt(l.created_at),
+      'Fecha de Etiqueta': l.label_date,
+      'Fecha y Hora de Impresión': l.printed_at
+        ? formatPrintStamp(l.printed_at)
+        : formatPrintStamp(l.created_at) + ' (heredado)',
+      'Tipo de Evento': l.printed_at
+        ? (l.event_type === 'reprint' ? 'Reimpresión' : 'Impresión')
+        : 'Heredado',
       'Usuario': l.created_by || '',
     }));
     const ws = XLSX.utils.json_to_sheet(rows);

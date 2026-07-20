@@ -94,6 +94,12 @@
               </div>
             </div>
           </div>
+
+          <!-- Leyenda automática de fecha/hora de impresión: se llena en el
+               instante de imprimir (doPrint en app.js), no con datos de
+               Generar/Vista previa. Posicionada en absoluto: no afecta el
+               tamaño ni la posición del resto de la etiqueta. -->
+          <div class="print-timestamp" id="print-timestamp"></div>
         </div>
       </div>
     </section>
@@ -129,8 +135,8 @@
           <thead>
             <tr>
               <th>No. Orden</th>
-              <th>Fecha</th>
-              <th>Creado</th>
+              <th>Fecha de Etiqueta</th>
+              <th>Fecha y Hora de Impresión</th>
               <th>Acciones</th>
             </tr>
           </thead>

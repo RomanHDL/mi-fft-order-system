@@ -20,6 +20,10 @@ const sql = DATABASE_URL ? neon(DATABASE_URL) : null;
 
 // Crea la tabla si no existe (idempotente). Se ejecuta una sola vez por
 // instancia de función gracias al cacheo en `schemaReady`.
+//
+// `printed_at`/`event_type` se agregan con ALTER TABLE ... IF NOT EXISTS para
+// no romper filas ya existentes (quedan NULL = registros heredados de cuando
+// el historial se llenaba al "Generar", no al imprimir). No se borra nada.
 let schemaReady = null;
 async function ensureSchema() {
   if (!sql) throw new Error('DATABASE_URL no está configurada.');
@@ -34,8 +38,11 @@ async function ensureSchema() {
           created_by TEXT
         )
       `;
+      await sql`ALTER TABLE labels ADD COLUMN IF NOT EXISTS printed_at TIMESTAMPTZ`;
+      await sql`ALTER TABLE labels ADD COLUMN IF NOT EXISTS event_type TEXT`;
       await sql`CREATE INDEX IF NOT EXISTS idx_labels_order_number ON labels (order_number)`;
       await sql`CREATE INDEX IF NOT EXISTS idx_labels_created_at ON labels (created_at DESC)`;
+      await sql`CREATE INDEX IF NOT EXISTS idx_labels_printed_at ON labels (printed_at DESC)`;
     })();
   }
   return schemaReady;
@@ -56,22 +63,25 @@ function validateOrderNumber(value) {
 }
 
 // GET /api/labels?search=<texto>
+// Orden: impresión más reciente primero. Los registros heredados (sin
+// printed_at, de cuando el historial se llenaba al "Generar") se ordenan por
+// su created_at — COALESCE evita que queden fuera de orden al fondo.
 app.get('/api/labels', async (req, res) => {
   try {
     await ensureSchema();
     const search = (req.query.search || '').toString().trim();
     const rows = search
       ? await sql`
-          SELECT id, order_number, label_date, created_at, created_by
+          SELECT id, order_number, label_date, created_at, created_by, printed_at, event_type
           FROM labels
           WHERE order_number ILIKE ${'%' + search + '%'}
-          ORDER BY created_at DESC
+          ORDER BY COALESCE(printed_at, created_at) DESC
           LIMIT 500
         `
       : await sql`
-          SELECT id, order_number, label_date, created_at, created_by
+          SELECT id, order_number, label_date, created_at, created_by, printed_at, event_type
           FROM labels
-          ORDER BY created_at DESC
+          ORDER BY COALESCE(printed_at, created_at) DESC
           LIMIT 500
         `;
     res.json({ success: true, labels: rows });
@@ -81,11 +91,18 @@ app.get('/api/labels', async (req, res) => {
   }
 });
 
-// POST /api/labels  { orderNumber, labelDate, createdBy? }
+// Tipos de evento válidos para un registro del historial. 'print' = botón
+// Imprimir; 'reprint' = Reimprimir desde el historial.
+const EVENT_TYPES = new Set(['print', 'reprint']);
+
+// POST /api/labels  { orderNumber, labelDate, printedAt, eventType, createdBy? }
+// Cada llamada representa UN evento real de impresión (no la creación/edición
+// de una etiqueta): se invoca en el instante en que el cliente dispara
+// window.print(), con su propia marca de tiempo `printedAt`.
 app.post('/api/labels', async (req, res) => {
   try {
     await ensureSchema();
-    const { orderNumber, labelDate, createdBy } = req.body || {};
+    const { orderNumber, labelDate, createdBy, printedAt, eventType } = req.body || {};
 
     if (!validateOrderNumber(orderNumber)) {
       return res.status(400).json({
@@ -100,10 +117,17 @@ app.post('/api/labels', async (req, res) => {
     const trimmedOrder = (orderNumber && String(orderNumber).trim()) || '';
     const date = (labelDate && String(labelDate).trim()) || '';
 
+    // printedAt llega en ISO desde el cliente (hora exacta al invocar la
+    // impresión). Si por algún motivo no llega, se usa la hora del servidor
+    // como respaldo — nunca se deja el registro sin marca de impresión.
+    const printedAtDate = printedAt ? new Date(printedAt) : null;
+    const printedAtValue = printedAtDate && !isNaN(printedAtDate.getTime()) ? printedAtDate : new Date();
+    const normalizedEventType = EVENT_TYPES.has(eventType) ? eventType : 'print';
+
     const rows = await sql`
-      INSERT INTO labels (order_number, label_date, created_by)
-      VALUES (${trimmedOrder}, ${date}, ${createdBy || null})
-      RETURNING id, order_number, label_date, created_at, created_by
+      INSERT INTO labels (order_number, label_date, created_by, printed_at, event_type)
+      VALUES (${trimmedOrder}, ${date}, ${createdBy || null}, ${printedAtValue.toISOString()}, ${normalizedEventType})
+      RETURNING id, order_number, label_date, created_at, created_by, printed_at, event_type
     `;
     res.status(201).json({ success: true, label: rows[0] });
   } catch (err) {
