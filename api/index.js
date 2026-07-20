@@ -43,12 +43,15 @@ async function ensureSchema() {
 
 // Acepta letras, números y guiones en cualquier combinación (FBA12345,
 // FFT-2026-001, ABC123, 123456789, A1B2C3...). No se limita a solo números.
+// El número de orden es OPCIONAL: vacío/ausente es válido; sólo se valida
+// el patrón cuando el usuario sí escribió algo.
 const ORDER_NUMBER_PATTERN = /^[A-Za-z0-9-]+$/;
 
 function validateOrderNumber(value) {
+  if (value === undefined || value === null) return true;
   if (typeof value !== 'string') return false;
   const trimmed = value.trim();
-  if (!trimmed) return false;
+  if (!trimmed) return true;
   return ORDER_NUMBER_PATTERN.test(trimmed);
 }
 
@@ -91,9 +94,10 @@ app.post('/api/labels', async (req, res) => {
       });
     }
 
-    const trimmedOrder = orderNumber.trim();
-    // La fecha es opcional: si no se captura, se guarda vacía (no se fuerza
-    // la fecha del día ni se rechaza la solicitud).
+    // El número de orden es opcional: si no se captura, se guarda vacío (no
+    // se rechaza la solicitud). La fecha es opcional: si no se captura, se
+    // guarda vacía (no se fuerza la fecha del día ni se rechaza la solicitud).
+    const trimmedOrder = (orderNumber && String(orderNumber).trim()) || '';
     const date = (labelDate && String(labelDate).trim()) || '';
 
     const rows = await sql`

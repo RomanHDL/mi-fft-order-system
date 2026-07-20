@@ -204,14 +204,13 @@
     formMsg.classList.toggle('ok', !isError && Boolean(text));
   }
 
-  // Validación compartida (Generar e Imprimir). El número de orden sigue
-  // siendo obligatorio. La fecha es realmente OPCIONAL: puede quedar vacía
-  // (a veces la hoja no es del día en que se guarda) y eso NO bloquea nada —
+  // Validación compartida (Generar e Imprimir). El número de orden es
+  // OPCIONAL, igual que la fecha: puede quedar vacío y eso NO bloquea nada —
   // sólo se valida el formato si el usuario sí escribió algo.
   function validateOrderAndDate() {
     const orderNumber = normalizeOrderValue(orderInput.value.trim());
 
-    if (!orderNumber || !ORDER_PATTERN.test(orderNumber)) {
+    if (orderNumber && !ORDER_PATTERN.test(orderNumber)) {
       setFormMsg('El número de orden solo admite letras, números y guiones (ej. FBA12345, FFT-2026-001).', true);
       orderInput.focus();
       return null;
@@ -303,7 +302,7 @@
   // ---- Nueva etiqueta ----
   btnNew.addEventListener('click', () => {
     orderInput.value = '';
-    dateInput.value = todayDisplayString(); // automática, pero el usuario puede cambiarla
+    dateInput.value = '';
     previousDateValue = dateInput.value;
     setFormMsg('', false);
     updateLabelPreviewImmediate();
@@ -436,7 +435,7 @@
   });
 
   // ---- Inicialización ----
-  dateInput.value = todayDisplayString(); // automática; el usuario puede editarla si quiere
+  dateInput.value = '';
   previousDateValue = dateInput.value;
   updateLabelPreviewImmediate();
   fetchHistory('');
