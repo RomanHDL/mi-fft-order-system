@@ -21,7 +21,6 @@
   const dateInput = document.getElementById('label-date');
   const orderValueDisplay = document.getElementById('order-value-display');
   const fechaValueDisplay = document.getElementById('fecha-value-display');
-  const printTimestampEl = document.getElementById('print-timestamp');
   const qrCanvasEl = document.getElementById('qr-canvas');
 
   const labelForm = document.getElementById('label-form');
@@ -329,7 +328,6 @@
     printing = true;
     try {
       const printedAtIso = new Date().toISOString();
-      printTimestampEl.textContent = 'FECHA Y HORA DE IMPRESIÓN: ' + formatPrintStamp(printedAtIso);
 
       const recorded = await recordPrint(orderNumber, labelDate, printedAtIso, eventType);
       if (!recorded) {
@@ -353,7 +351,6 @@
     orderInput.value = '';
     dateInput.value = '';
     previousDateValue = dateInput.value;
-    printTimestampEl.textContent = '';
     setFormMsg('', false);
     updateLabelPreviewImmediate();
     closePreview();
