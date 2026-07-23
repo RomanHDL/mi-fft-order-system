@@ -141,10 +141,10 @@
     }[ch]));
   }
 
-  // ---- Normalización del No. de Orden: mayúsculas, sin espacios, sólo
-  // letras/números/guiones (evita caracteres innecesarios desde que se escriben) ----
+  // ---- Normalización del No. de Orden: mayúsculas, sólo letras/números/
+  // guiones/espacios (evita caracteres innecesarios desde que se escriben) ----
   function normalizeOrderValue(raw) {
-    return raw.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+    return raw.toUpperCase().replace(/[^A-Z0-9 -]/g, '');
   }
 
   // ---- Etiqueta / QR en vivo ----

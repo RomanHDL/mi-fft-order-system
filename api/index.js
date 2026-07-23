@@ -52,7 +52,7 @@ async function ensureSchema() {
 // FFT-2026-001, ABC123, 123456789, A1B2C3...). No se limita a solo números.
 // El número de orden es OPCIONAL: vacío/ausente es válido; sólo se valida
 // el patrón cuando el usuario sí escribió algo.
-const ORDER_NUMBER_PATTERN = /^[A-Za-z0-9-]+$/;
+const ORDER_NUMBER_PATTERN = /^[A-Za-z0-9 -]+$/;
 
 function validateOrderNumber(value) {
   if (value === undefined || value === null) return true;
