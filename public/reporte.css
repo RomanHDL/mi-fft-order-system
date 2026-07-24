@@ -69,7 +69,7 @@ body.preview-mode .rp-print-area {
 .rp-header-table th,
 .rp-header-table td {
   border: 1.3px solid var(--black);
-  padding: 1.3cqw 2.2cqw;
+  padding: 0.7cqw 2.2cqw;
 }
 
 .rp-header-table th {
@@ -106,9 +106,13 @@ body.preview-mode .rp-print-area {
   color: var(--gray-900);
 }
 
+/* border, NO background: un color de fondo depende de que el usuario tenga
+   activado "Gráficos de fondo" en el diálogo de impresión (desactivado por
+   default en Chrome) y por eso no salía al imprimir; un border SIEMPRE se
+   imprime sin importar esa opción. */
 .rp-col-divider {
-  width: 1.3px;
-  background: var(--black);
+  width: 0;
+  border-left: 1.3px solid var(--black);
 }
 
 /* ==========================================================================
@@ -178,7 +182,15 @@ body.preview-mode .rp-print-area {
      que la gente ve en pantalla antes de imprimir. */
   .rp-header-table { font-size: 15.9pt; }
   .rp-header-table th { font-size: 18.4pt; }
-  .rp-header-table th, .rp-header-table td { padding: 8pt 13.5pt; }
+  .rp-header-table th, .rp-header-table td { padding: 4.3pt 13.5pt; }
   .rp-columns { margin-top: 0.51in; }
   .rp-col { font-size: 19.6pt; padding-top: 6pt; }
+
+  /* Respaldo: aunque la línea divisoria ya usa border (siempre se imprime),
+     esto evita que cualquier otro color de fondo se pierda si el usuario
+     imprime sin "Gráficos de fondo" activado. */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
