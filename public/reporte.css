@@ -159,7 +159,7 @@ body.preview-mode .rp-print-area {
     width: 8.5in;
     height: 11in;
     margin: 0;
-    padding: 0.5in 0.55in;
+    padding: 0.425in;
     border: none;
     overflow: hidden;
     box-sizing: border-box;
@@ -171,9 +171,14 @@ body.preview-mode .rp-print-area {
     break-inside: avoid-page;
   }
 
-  .rp-header-table { font-size: 10.5pt; }
-  .rp-header-table th { font-size: 12pt; }
-  .rp-header-table th, .rp-header-table td { padding: 5pt 10pt; }
-  .rp-columns { margin-top: 0.5in; }
-  .rp-col { font-size: 14pt; }
+  /* Estos valores en pt son la conversión EXACTA de los cqw de pantalla a
+     escala real de una hoja Carta (8.5in = 612pt de ancho): 1cqw = 6.12pt.
+     Así la vista en pantalla (arriba) es un WYSIWYG fiel de la hoja impresa
+     real, no una aproximación — evita que el texto salga más chico de lo
+     que la gente ve en pantalla antes de imprimir. */
+  .rp-header-table { font-size: 15.9pt; }
+  .rp-header-table th { font-size: 18.4pt; }
+  .rp-header-table th, .rp-header-table td { padding: 8pt 13.5pt; }
+  .rp-columns { margin-top: 0.51in; }
+  .rp-col { font-size: 19.6pt; padding-top: 6pt; }
 }
