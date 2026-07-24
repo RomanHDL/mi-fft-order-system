@@ -19,7 +19,7 @@
 
 .rp-preview-wrap {
   container-type: inline-size;
-  width: min(620px, 100%);
+  width: min(420px, 100%);
   aspect-ratio: 8.5 / 11;
   margin: 0 auto;
 }
