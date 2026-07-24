@@ -63,17 +63,17 @@ body.preview-mode .rp-print-area {
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
-  font-size: 2.6cqw;
+  font-size: 2.2cqw;
 }
 
 .rp-header-table th,
 .rp-header-table td {
   border: 1.3px solid var(--black);
-  padding: 0.7cqw 2.2cqw;
+  padding: 0.4cqw 1.8cqw;
 }
 
 .rp-header-table th {
-  font-size: 3cqw;
+  font-size: 2.6cqw;
   font-weight: 700;
   text-align: center;
 }
@@ -88,6 +88,19 @@ body.preview-mode .rp-print-area {
   min-height: 1.4em;
 }
 
+/* Fila de Responsable: una sola celda unida (colspan=2), SIN línea vertical
+   en medio — a diferencia de Turno/Fecha, aquí no hay caja separada para
+   el valor, va todo en la misma línea junto a la etiqueta. */
+.rp-responsable-cell {
+  font-weight: 400;
+  min-height: 1.4em;
+}
+
+.rp-value-inline {
+  font-weight: 600;
+  margin-left: 0.8em;
+}
+
 /* Columnas TRG / Almacén: ocupan el resto de la hoja, separadas por una
    línea vertical — espacio en blanco para llenar a mano durante el turno. */
 .rp-columns {
@@ -95,7 +108,7 @@ body.preview-mode .rp-print-area {
   min-height: 0;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  margin-top: 6cqw;
+  margin-top: 3cqw;
 }
 
 .rp-col {
@@ -180,10 +193,11 @@ body.preview-mode .rp-print-area {
      Así la vista en pantalla (arriba) es un WYSIWYG fiel de la hoja impresa
      real, no una aproximación — evita que el texto salga más chico de lo
      que la gente ve en pantalla antes de imprimir. */
-  .rp-header-table { font-size: 15.9pt; }
-  .rp-header-table th { font-size: 18.4pt; }
-  .rp-header-table th, .rp-header-table td { padding: 4.3pt 13.5pt; }
-  .rp-columns { margin-top: 0.51in; }
+  .rp-header-table { font-size: 13.5pt; }
+  .rp-header-table th { font-size: 15.9pt; }
+  .rp-header-table th, .rp-header-table td { padding: 2.5pt 11pt; }
+  .rp-value-inline { margin-left: 10pt; }
+  .rp-columns { margin-top: 0.26in; }
   .rp-col { font-size: 19.6pt; padding-top: 6pt; }
 
   /* Respaldo: aunque la línea divisoria ya usa border (siempre se imprime),
