@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporte de Producción de Paletizado · Mi Technologies</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/reporte.css">
+</head>
+<body>
+
+  <!-- ============================== HEADER ============================== -->
+  <header class="no-print app-header">
+    <div class="header-left">
+      <img src="/logo-mitech.png" alt="Mi Technologies" class="header-logo brand-logo">
+      <div class="header-titles">
+        <h1>Reporte de Producción de Paletizado</h1>
+        <p class="subtitle">Mi Technologies International S.A. de C.V. · Área FFT TV</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="/" class="btn btn-header">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Etiquetas FFT</span>
+      </a>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <!-- ======================== BARRA DE CAPTURA ======================== -->
+    <section class="capture-bar no-print" aria-label="Datos del reporte">
+      <form id="report-form" novalidate class="capture-form">
+        <div class="field field-turno">
+          <label for="rp-turno">Turno</label>
+          <input id="rp-turno" name="turno" type="text"
+                 placeholder="Turno 1, Turno 2…" autocomplete="off" spellcheck="false">
+        </div>
+
+        <div class="field field-date">
+          <label for="rp-fecha">Fecha</label>
+          <input id="rp-fecha" name="fecha" type="text"
+                 placeholder="DD/MM/AAAA" autocomplete="off" spellcheck="false"
+                 inputmode="numeric" maxlength="10">
+        </div>
+
+        <div class="field field-responsable">
+          <label for="rp-responsable">Responsable</label>
+          <input id="rp-responsable" name="responsable" type="text"
+                 placeholder="Nombre del responsable" autocomplete="off" spellcheck="false">
+        </div>
+
+        <div class="actions">
+          <button type="button" id="rp-btn-preview" class="btn">Vista previa</button>
+          <button type="button" id="rp-btn-print" class="btn">Imprimir</button>
+          <button type="button" id="rp-btn-today" class="btn btn-ghost">Hoy</button>
+        </div>
+      </form>
+
+      <p class="hint">La fecha se llena sola con el día de hoy cada vez que abres esta página; puedes cambiarla si necesitas imprimir para otro día.</p>
+    </section>
+
+    <!-- =================== VISTA PREVIA DE LA HOJA =================== -->
+    <section class="rp-sheet-section" aria-label="Vista previa del reporte">
+      <div class="rp-preview-wrap" id="rp-preview-wrap">
+        <div class="rp-print-area" id="rp-print-area">
+
+          <table class="rp-header-table">
+            <tr><th colspan="2">Reporte de producción de paletizado</th></tr>
+            <tr>
+              <td class="rp-label-cell">Turno</td>
+              <td class="rp-value-cell" id="rp-turno-display">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="rp-label-cell">Fecha:</td>
+              <td class="rp-value-cell" id="rp-fecha-display">&nbsp;</td>
+            </tr>
+            <tr>
+              <td class="rp-label-cell">Responsable</td>
+              <td class="rp-value-cell" id="rp-responsable-display">&nbsp;</td>
+            </tr>
+          </table>
+
+          <div class="rp-columns">
+            <div class="rp-col rp-col-trg">TRG</div>
+            <div class="rp-col-divider"></div>
+            <div class="rp-col rp-col-almacen">Almacén</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <p class="print-info no-print">Al imprimir se genera una sola hoja Carta VERTICAL con este formato.</p>
+  </main>
+
+  <footer class="no-print app-footer">
+    Mi Technologies Internacional S.A. de C.V. · Sistema interno · Área FFT TV
+  </footer>
+
+  <!-- Botonera flotante sólo visible en modo "Vista previa" (no imprime) -->
+  <div class="preview-toolbar no-print" id="rp-preview-toolbar">
+    <button type="button" id="rp-btn-preview-print" class="btn btn-primary">Imprimir</button>
+    <button type="button" id="rp-btn-preview-close" class="btn btn-ghost">Cerrar vista previa</button>
+  </div>
+
+  <script src="/reporte.js"></script>
+</body>
+</html>

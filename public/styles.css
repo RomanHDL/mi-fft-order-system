@@ -74,7 +74,7 @@ h1, h2, h3 { margin: 0; }
   color: var(--gray-700);
 }
 
-.header-right { flex-shrink: 0; }
+.header-right { display: flex; gap: 10px; flex-wrap: wrap; flex-shrink: 0; }
 
 .btn-header {
   display: inline-flex;
@@ -160,6 +160,8 @@ h1, h2, h3 { margin: 0; }
   cursor: pointer;
   min-height: 44px;
   font-family: var(--font);
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 .btn:hover { background: var(--gray-100); }
