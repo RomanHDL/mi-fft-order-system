@@ -12,7 +12,7 @@
 (function () {
   'use strict';
 
-  const ORDER_PATTERN = /^[A-Za-z0-9-]+$/;
+  const ORDER_PATTERN = /^[A-Za-z0-9 -]+$/;
   const DATE_PATTERN = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
   const QR_DEBOUNCE_MS = 200;
 
@@ -235,7 +235,7 @@
     const orderNumber = normalizeOrderValue(orderInput.value.trim());
 
     if (orderNumber && !ORDER_PATTERN.test(orderNumber)) {
-      setFormMsg('El número de orden solo admite letras, números y guiones (ej. FBA12345, FFT-2026-001).', true);
+      setFormMsg('El número de orden solo admite letras, números, espacios y guiones (ej. FBA12345, FFT-2026-001).', true);
       orderInput.focus();
       return null;
     }
