@@ -440,7 +440,6 @@
       <div class="nc-label" data-id="${report.id == null ? '' : report.id}">
         <div class="nc-label-head">
           <img src="/logo-mitech.png" alt="MI Technologies" class="nc-label-logo brand-logo">
-          <span class="nc-label-brand-word">Technologies</span>
         </div>
         <div class="nc-label-title-row">
           <span class="nc-label-title-left">CONTROL DE CALIDAD</span>

@@ -378,19 +378,15 @@
    espacio se ve como overflow real y detectable. */
 .nc-label > * { flex-shrink: 0; }
 
+/* Sólo el logo (ya trae "MI Technologies" integrado en azul) — centrado
+   arriba de la etiqueta, sin texto negro adicional al lado. */
 .nc-label-head {
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
   line-height: 1;
 }
 .nc-label-logo { height: 3.4cqh; width: auto; flex-shrink: 0; }
-.nc-label-brand-word {
-  font-size: 1.55cqh;
-  font-weight: 700;
-  color: var(--gray-700);
-  white-space: nowrap;
-}
 
 .nc-label-title-row {
   display: flex;
@@ -644,7 +640,6 @@
   }
 
   .nc-label-logo { height: 0.289in; }
-  .nc-label-brand-word { font-size: 9.5pt; }
   .nc-label-title-left,
   .nc-label-title-right { font-size: 8.6pt; }
   .nc-label-field-row { font-size: 8.7pt; }
