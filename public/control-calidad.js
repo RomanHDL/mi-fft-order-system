@@ -49,7 +49,6 @@
   const btnAdd = document.getElementById('nc-btn-add');
 
   const alertBox = document.getElementById('nc-alert');
-  const subnavCount = document.getElementById('nc-subnav-count');
 
   const trayList = document.getElementById('nc-tray-list');
   const trayEmpty = document.getElementById('nc-tray-empty');
@@ -93,14 +92,16 @@
   });
 
   // ---- Estado en memoria ----
-  let trayReports = [];           // reportes 'pendiente' (la bandeja completa)
-  let selectedIds = new Set();    // subconjunto de la bandeja que se imprimirá ahora
+  let trayReports = [];           // reportes 'pendiente' (la bandeja completa); su orden
+                                   // define la posición 1-6 en la hoja — se puede
+                                   // reordenar arrastrando cada fila (ver dragReorder).
   let historyReports = [];
   let pendingPrintIds = null;     // ids que se marcarán 'impreso' al confirmar
   let pendingReprintReport = null; // reporte que se está reimprimiendo (uno solo)
   let searchTimer = null;
   let lpnLookupToken = 0;
   let savedScrollY = 0;
+  let dragFromId = null;          // id del reporte que se está arrastrando en la bandeja
 
   // ---- Utilidades compartidas (mismo patrón que app.js/reporte.js) ----
   function pad2(n) { return n.toString().padStart(2, '0'); }
@@ -285,7 +286,6 @@
       if (!res.ok || !data.success) throw new Error(data.error || 'No se pudo agregar el reporte.');
 
       trayReports.push(data.report);
-      selectedIds.add(data.report.id);
       renderTray();
       renderTrayPreview();
       setFormMsg(`Reporte ${data.report.report_number} agregado a la bandeja.`, false);
@@ -321,12 +321,14 @@
   });
 
   // ---- Bandeja de impresión ----
+  // Toda la bandeja se imprime junta (no hay selección parcial): el orden de
+  // los reportes en `trayReports` define la posición 1-6 en la hoja, y se
+  // puede reordenar arrastrando cada fila desde su icono de agarre (⋮⋮).
   function renderTray() {
     trayList.innerHTML = '';
     const count = trayReports.length;
 
     trayCounter.textContent = `${count} / ${MAX_TRAY} etiquetas`;
-    subnavCount.textContent = `${count} / ${MAX_TRAY}`;
     trayEmpty.classList.toggle('hidden', count > 0);
     trayMore.classList.toggle('hidden', !(count > 0 && count < MAX_TRAY));
     btnAdd.disabled = count >= MAX_TRAY;
@@ -336,31 +338,65 @@
       const row = document.createElement('div');
       row.className = 'nc-tray-row';
       row.dataset.id = report.id;
+      row.draggable = true;
       row.innerHTML = `
-        <input type="checkbox" data-id="${report.id}" ${selectedIds.has(report.id) ? 'checked' : ''} aria-label="Incluir ${escapeHtml(report.report_number)} en la hoja">
+        <span class="nc-tray-row-handle" title="Arrastra para reordenar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><circle cx="9" cy="6" r="1.6"></circle><circle cx="9" cy="12" r="1.6"></circle><circle cx="9" cy="18" r="1.6"></circle><circle cx="15" cy="6" r="1.6"></circle><circle cx="15" cy="12" r="1.6"></circle><circle cx="15" cy="18" r="1.6"></circle></svg>
+        </span>
         <div class="nc-tray-row-info">
-          <span class="nc-tray-row-id">${escapeHtml(report.report_number)}</span>
-          <span class="nc-tray-row-meta">LPN ${escapeHtml(report.lpn)} · SKU ${escapeHtml(report.sku)} · ${escapeHtml(report.report_date)}</span>
+          <div class="nc-tray-row-top">
+            <span class="nc-tray-row-id">${escapeHtml(report.report_number)}</span>
+            <span class="nc-tray-row-date">${escapeHtml(report.report_date)}</span>
+          </div>
+          <span class="nc-tray-row-meta">LPN ${escapeHtml(report.lpn)} · SKU ${escapeHtml(report.sku)}</span>
           <span class="nc-tray-row-defects">${escapeHtml(defectsToLabel(report.defects, report.defect_other))}</span>
         </div>
-        <button type="button" class="nc-tray-row-remove" data-id="${report.id}">Eliminar</button>`;
+        <button type="button" class="nc-tray-row-remove" data-id="${report.id}" aria-label="Eliminar ${escapeHtml(report.report_number)} de la bandeja">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+        </button>`;
       frag.appendChild(row);
     });
     trayList.appendChild(frag);
 
-    const selectedCount = trayReports.filter((r) => selectedIds.has(r.id)).length;
-    btnPrintSheet.disabled = selectedCount === 0;
-    btnPrintSheetLabel.textContent = `Imprimir hoja (${selectedCount} etiqueta${selectedCount === 1 ? '' : 's'})`;
+    btnPrintSheet.disabled = count === 0;
+    btnPrintSheetLabel.textContent = `Imprimir hoja (${count} etiqueta${count === 1 ? '' : 's'})`;
     trayExplain.textContent = count > 0
-      ? `Se imprimirán ${selectedCount} de ${MAX_TRAY} etiquetas en la hoja.`
+      ? `Se imprimirán ${count} de ${MAX_TRAY} etiquetas en la hoja.`
       : '';
   }
 
-  trayList.addEventListener('change', (e) => {
-    const cb = e.target.closest('input[type="checkbox"][data-id]');
-    if (!cb) return;
-    const id = Number(cb.dataset.id);
-    if (cb.checked) selectedIds.add(id); else selectedIds.delete(id);
+  // ---- Reordenar la bandeja arrastrando filas ----
+  trayList.addEventListener('dragstart', (e) => {
+    const row = e.target.closest('.nc-tray-row');
+    if (!row) return;
+    dragFromId = Number(row.dataset.id);
+    row.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  trayList.addEventListener('dragend', (e) => {
+    const row = e.target.closest('.nc-tray-row');
+    if (row) row.classList.remove('dragging');
+    dragFromId = null;
+  });
+  trayList.addEventListener('dragover', (e) => {
+    if (dragFromId == null) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  });
+  trayList.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const targetRow = e.target.closest('.nc-tray-row');
+    if (!targetRow || dragFromId == null) return;
+    const toId = Number(targetRow.dataset.id);
+    if (toId === dragFromId) return;
+    const fromIndex = trayReports.findIndex((r) => r.id === dragFromId);
+    const toIndex = trayReports.findIndex((r) => r.id === toId);
+    if (fromIndex === -1 || toIndex === -1) return;
+    const [moved] = trayReports.splice(fromIndex, 1);
+    trayReports.splice(toIndex, 0, moved);
     renderTray();
     renderTrayPreview();
   });
@@ -379,7 +415,6 @@
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || 'No se pudo eliminar el reporte.');
       trayReports = trayReports.filter((r) => r.id !== id);
-      selectedIds.delete(id);
       renderTray();
       renderTrayPreview();
     } catch (err) {
@@ -395,7 +430,6 @@
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || 'Error al cargar la bandeja.');
       trayReports = (data.reports || []).slice().sort((a, b) => a.id - b.id);
-      selectedIds = new Set(trayReports.map((r) => r.id));
       renderTray();
       renderTrayPreview();
       setAlert('');
@@ -406,19 +440,21 @@
   }
 
   // ---- Etiqueta (misma plantilla para vista previa e impresión) ----
+  // Los 7 defectos del catálogo SIEMPRE se listan completos en cada
+  // etiqueta (checkbox marcado sólo si el reporte lo seleccionó) — nunca
+  // varía cuáles aparecen, para que las 6 etiquetas de la hoja sean
+  // idénticas en estructura.
   function renderLabelHtml(report) {
     const defects = report.defects || [];
     const defectItems = DEFECT_ORDER.map((key) => {
       const checked = defects.includes(key);
+      const isOtro = key === 'otro';
+      const otroText = isOtro && checked && report.defect_other ? `: ${escapeHtml(report.defect_other)}` : '';
       return `<div class="nc-label-defect-item ${checked ? 'checked' : ''}">
-        <span class="nc-label-defect-box">${checked ? 'X' : ''}</span>
-        <span class="${checked ? 'nc-label-cap-strong' : ''}">${escapeHtml(DEFECT_LABELS[key])}</span>
+        <span class="nc-label-defect-box">${checked ? '<svg viewBox="0 0 24 24" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}</span>
+        <span class="nc-label-defect-name">${escapeHtml(DEFECT_LABELS[key])}${otroText}</span>
       </div>`;
     }).join('');
-
-    const otherLine = defects.includes('otro') && report.defect_other
-      ? `<div class="nc-label-other">Otro: ${escapeHtml(report.defect_other)}</div>`
-      : '';
 
     return `
       <div class="nc-label" data-id="${report.id}">
@@ -428,22 +464,21 @@
         </div>
         <div class="nc-label-brand">CONTROL DE CALIDAD</div>
         <div class="nc-label-status">ESTADO: NO CONFORME</div>
-        <div class="nc-label-row">
+        <div class="nc-label-row nc-label-row-3">
           <div><span class="nc-label-cap">Fecha</span><span class="nc-label-val">${escapeHtml(report.report_date)}</span></div>
           <div><span class="nc-label-cap">LPN</span><span class="nc-label-val">${escapeHtml(report.lpn)}</span></div>
-        </div>
-        <div class="nc-label-row">
           <div><span class="nc-label-cap">SKU</span><span class="nc-label-val">${escapeHtml(report.sku)}</span></div>
         </div>
-        <div class="nc-label-defects-title">Defecto detectado</div>
-        <div class="nc-label-defect-grid">${defectItems}</div>
-        ${otherLine}
-        <div class="nc-label-row">
-          <div><span class="nc-label-cap">Origen</span><span class="nc-label-val">${escapeHtml(report.origin)}</span></div>
-        </div>
-        <div class="nc-label-row">
-          <div><span class="nc-label-cap">Inspector</span><span class="nc-label-val">${escapeHtml(report.inspector)}</span></div>
-          <div><span class="nc-label-cap">Recibido</span><span class="nc-label-val">${escapeHtml(report.received_by)}</span></div>
+        <div class="nc-label-bottom">
+          <div class="nc-label-defects-col">
+            <div class="nc-label-defects-title">Defecto detectado</div>
+            <div class="nc-label-defect-list">${defectItems}</div>
+          </div>
+          <div class="nc-label-meta-col">
+            <div><span class="nc-label-cap">Origen</span><span class="nc-label-val">${escapeHtml(report.origin)}</span></div>
+            <div><span class="nc-label-cap">Inspector</span><span class="nc-label-val">${escapeHtml(report.inspector)}</span></div>
+            <div><span class="nc-label-cap">Recibido</span><span class="nc-label-val">${escapeHtml(report.received_by)}</span></div>
+          </div>
         </div>
       </div>`;
   }
@@ -458,12 +493,11 @@
     </div>`;
   }
 
-  // Bandeja normal: llena la hoja con los reportes SELECCIONADOS (casilla en
-  // la bandeja), en su orden de creación, y completa los espacios vacíos.
+  // Bandeja normal: llena la hoja con TODOS los reportes de la bandeja, en
+  // el orden mostrado (reordenable arrastrando), y completa los espacios
+  // vacíos restantes.
   function renderTrayPreview() {
-    const selected = trayReports.filter((r) => selectedIds.has(r.id)).slice(0, MAX_TRAY);
-    const slots = [];
-    selected.forEach((r) => slots.push(renderLabelHtml(r)));
+    const slots = trayReports.slice(0, MAX_TRAY).map(renderLabelHtml);
     while (slots.length < MAX_TRAY) slots.push(renderEmptySlotHtml());
     printArea.innerHTML = slots.join('');
   }
@@ -486,9 +520,8 @@
   }
 
   btnPrintSheet.addEventListener('click', async () => {
-    const selected = trayReports.filter((r) => selectedIds.has(r.id));
-    if (!selected.length) return;
-    pendingPrintIds = selected.map((r) => r.id);
+    if (!trayReports.length) return;
+    pendingPrintIds = trayReports.map((r) => r.id);
     pendingReprintReport = null;
     await waitForPrintReady();
     window.print();
@@ -497,7 +530,7 @@
   window.addEventListener('afterprint', () => {
     if (pendingPrintIds) {
       confirmTitle.textContent = '¿La impresión fue correcta?';
-      confirmBody.textContent = 'Si confirmas, los reportes seleccionados pasarán a "Impreso" y saldrán de la bandeja. Si la impresión falló o la cancelaste, permanecerán en la bandeja para reintentar.';
+      confirmBody.textContent = 'Si confirmas, los reportes de la bandeja pasarán a "Impreso" y la bandeja quedará vacía. Si la impresión falló o la cancelaste, permanecerán en la bandeja para reintentar.';
       openConfirmModal();
     } else if (pendingReprintReport) {
       confirmTitle.textContent = '¿La reimpresión fue correcta?';
@@ -530,7 +563,6 @@
         if (!res.ok || !data.success) throw new Error(data.error || 'No se pudo registrar la impresión.');
         const printedIds = new Set(data.reports.map((r) => r.id));
         trayReports = trayReports.filter((r) => !printedIds.has(r.id));
-        ids.forEach((id) => selectedIds.delete(id));
         renderTray();
         renderTrayPreview();
         setFormMsg(`${printedIds.size} reporte(s) marcados como impresos.`, false);

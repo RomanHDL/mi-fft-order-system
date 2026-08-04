@@ -36,20 +36,6 @@
     </div>
   </header>
 
-  <!-- ======================== BARRA DE OPCIONES ======================== -->
-  <nav class="no-print nc-subnav" aria-label="Secciones de Control de Calidad">
-    <a href="#nc-col-form" class="nc-subnav-item">
-      <span class="nc-subnav-label">Nuevo Reporte</span>
-    </a>
-    <a href="#nc-col-tray" class="nc-subnav-item">
-      <span class="nc-subnav-label">Bandeja de Impresión</span>
-      <span class="nc-subnav-count" id="nc-subnav-count">0 / 6</span>
-    </a>
-    <a href="#nc-col-preview" class="nc-subnav-item">
-      <span class="nc-subnav-label">Historial</span>
-    </a>
-  </nav>
-
   <main class="main-content nc-main">
 
     <p class="nc-alert no-print hidden" id="nc-alert" role="status" aria-live="polite"></p>
@@ -75,31 +61,60 @@
         <form id="nc-form" novalidate>
           <div class="nc-field">
             <label for="nc-report-number">ID Reporte</label>
-            <input id="nc-report-number" type="text" value="NC-000001" disabled>
+            <div class="nc-field-icon-wrap">
+              <input id="nc-report-number" type="text" value="NC-000001" disabled>
+              <svg class="nc-field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.57 3.24L3.24 9.57A2 2 0 0 0 3.83 11l9.58 9.59a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.83Z"></path>
+                <circle cx="8.5" cy="8.5" r="1.2"></circle>
+              </svg>
+            </div>
           </div>
 
           <div class="nc-field-row">
             <div class="nc-field">
               <label for="nc-date">Fecha</label>
-              <input id="nc-date" name="reportDate" type="text" placeholder="DD/MM/AAAA"
-                     autocomplete="off" spellcheck="false" inputmode="numeric" maxlength="10">
+              <div class="nc-field-icon-wrap">
+                <input id="nc-date" name="reportDate" type="text" placeholder="DD/MM/AAAA"
+                       autocomplete="off" spellcheck="false" inputmode="numeric" maxlength="10">
+                <svg class="nc-field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </div>
             </div>
             <div class="nc-field">
               <label for="nc-lpn">LPN</label>
-              <input id="nc-lpn" name="lpn" type="text" placeholder="Escribe o escanea el LPN"
-                     autocomplete="off" spellcheck="false">
+              <div class="nc-field-icon-wrap">
+                <input id="nc-lpn" name="lpn" type="text" placeholder="Escanea o escribe el LPN"
+                       autocomplete="off" spellcheck="false">
+                <svg class="nc-field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
+                  <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
+                  <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
+                  <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
+                  <line x1="7" y1="12" x2="17" y2="12"></line>
+                </svg>
+              </div>
             </div>
           </div>
 
           <div class="nc-field">
             <label for="nc-sku">SKU</label>
-            <input id="nc-sku" name="sku" type="text" placeholder="Se busca automáticamente por LPN"
-                   autocomplete="off" spellcheck="false">
+            <div class="nc-field-icon-wrap">
+              <input id="nc-sku" name="sku" type="text" placeholder="Se busca automáticamente por LPN"
+                     autocomplete="off" spellcheck="false">
+              <svg class="nc-field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
             <span class="nc-field-hint" id="nc-sku-hint"></span>
           </div>
 
           <div class="nc-field">
-            <label>Defecto detectado</label>
+            <label>Defecto detectado <span class="nc-label-hint">(selecciona uno o varios)</span></label>
             <div class="nc-defect-grid" id="nc-defect-grid">
               <label class="nc-check"><input type="checkbox" name="defect" value="duplicado"><span>Duplicado</span></label>
               <label class="nc-check"><input type="checkbox" name="defect" value="pulgada_incorrecta"><span>Pulgada incorrecta</span></label>
@@ -109,15 +124,18 @@
               <label class="nc-check"><input type="checkbox" name="defect" value="salida"><span>Salida</span></label>
               <label class="nc-check"><input type="checkbox" name="defect" value="otro"><span>Otro</span></label>
             </div>
-            <input id="nc-defect-other" type="text" placeholder="Especifica el defecto…" disabled class="nc-defect-other">
+            <input id="nc-defect-other" type="text" placeholder="Especifica el defecto (si aplica Otro)" disabled class="nc-defect-other">
           </div>
 
           <div class="nc-field">
             <label for="nc-origin">Origen del Hallazgo</label>
             <select id="nc-origin" name="origin">
               <option value="">Selecciona…</option>
-              <option value="Producción">Producción</option>
               <option value="Paletizado FFT">Paletizado FFT</option>
+              <option value="Producción">Producción</option>
+              <option value="Inspección de línea">Inspección de línea</option>
+              <option value="Clasificación FFT">Clasificación FFT</option>
+              <option value="Empaque FFT">Empaque FFT</option>
               <option value="Almacén">Almacén</option>
               <option value="Calidad">Calidad</option>
               <option value="Recibo">Recibo</option>
@@ -231,13 +249,15 @@
           <div class="nc-sheet" id="nc-print-area"><!-- 6 slots inyectados por JS --></div>
         </div>
 
-        <p class="nc-info-banner no-print">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="9"></circle>
-            <line x1="12" y1="8" x2="12" y2="8.01"></line>
-            <line x1="12" y1="11" x2="12" y2="16"></line>
+        <p class="nc-info-banner nc-info-banner-shield no-print">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5Z"></path>
+            <polyline points="9 12 11 14 15 10"></polyline>
           </svg>
-          <span>Vista previa optimizada para Carta horizontal. Las 6 etiquetas aprovechan mejor el espacio de la hoja y mejoran la legibilidad al imprimir.</span>
+          <span>
+            <strong>Las 6 etiquetas tienen el mismo tamaño, están alineadas y optimizadas para Carta horizontal.</strong><br>
+            Todos los datos se mantienen visibles y legibles al imprimir.
+          </span>
         </p>
       </section>
 

@@ -8,46 +8,6 @@
    ========================================================================== */
 
 /* ---------------------------------------------------------------------- */
-/* Barra de opciones (Nuevo Reporte / Bandeja / Historial)                 */
-/* ---------------------------------------------------------------------- */
-
-.nc-subnav {
-  display: flex;
-  gap: 10px;
-  max-width: 1720px;
-  margin: 14px auto 0;
-  padding: 0 20px;
-}
-
-.nc-subnav-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  background: var(--white);
-  border: 1px solid var(--gray-300);
-  border-left: 4px solid var(--brand-blue);
-  border-radius: 8px;
-  padding: 10px 14px;
-  text-decoration: none;
-  color: var(--gray-900);
-  font-weight: 700;
-  font-size: 0.85rem;
-  transition: background-color 120ms ease;
-}
-.nc-subnav-item:hover { background: var(--brand-blue-tint); }
-
-.nc-subnav-count {
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: var(--white);
-  background: var(--brand-blue);
-  border-radius: 12px;
-  padding: 2px 10px;
-}
-
-/* ---------------------------------------------------------------------- */
 /* Alerta general (errores de red, avisos)                                 */
 /* ---------------------------------------------------------------------- */
 
@@ -212,6 +172,27 @@
 
 .nc-field-hint { font-size: 0.72rem; color: var(--gray-700); min-height: 1.1em; }
 
+.nc-label-hint {
+  text-transform: none;
+  font-weight: 500;
+  letter-spacing: normal;
+  color: var(--gray-500);
+}
+
+/* Ícono decorativo dentro del campo (calendario, escáner, lupa…) — sólo
+   visual, no interactivo; el campo sigue siendo un <input> de texto normal
+   igual que en los otros módulos del sistema. */
+.nc-field-icon-wrap { position: relative; }
+.nc-field-icon-wrap input { padding-right: 36px; }
+.nc-field-icon {
+  position: absolute;
+  right: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-500);
+  pointer-events: none;
+}
+
 .nc-defect-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -275,17 +256,22 @@
   border-radius: 6px;
   padding: 10px 12px;
   font-size: 0.82rem;
+  background: var(--white);
+  cursor: grab;
 }
+.nc-tray-row.dragging { opacity: 0.4; }
 
-.nc-tray-row input[type="checkbox"] {
-  width: 17px;
-  height: 17px;
-  accent-color: var(--brand-blue);
-  cursor: pointer;
+.nc-tray-row-handle {
+  display: flex;
+  align-items: center;
+  color: var(--gray-500);
+  flex-shrink: 0;
 }
 
 .nc-tray-row-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.nc-tray-row-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
 .nc-tray-row-id { font-weight: 700; color: var(--gray-900); }
+.nc-tray-row-date { color: var(--gray-500); font-size: 0.76rem; white-space: nowrap; }
 .nc-tray-row-meta {
   color: var(--gray-700);
   white-space: nowrap;
@@ -302,16 +288,19 @@
 }
 
 .nc-tray-row-remove {
-  border: 1.5px solid #a01313;
-  background: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #fdecec;
   color: #a01313;
-  font-weight: 700;
-  font-size: 0.75rem;
   border-radius: 6px;
-  padding: 7px 12px;
   cursor: pointer;
+  flex-shrink: 0;
 }
-.nc-tray-row-remove:hover { background: #fdecec; }
+.nc-tray-row-remove:hover { background: #f8d0d0; }
 
 .nc-tray-empty { color: var(--gray-700); font-size: 0.85rem; padding: 14px 0; text-align: center; }
 
@@ -430,8 +419,8 @@
 .nc-label-brand {
   font-size: 2.1cqh;
   font-weight: 800;
-  letter-spacing: 0.06em;
-  color: var(--gray-700);
+  letter-spacing: 0.08em;
+  color: var(--black);
   white-space: nowrap;
   line-height: 1;
 }
@@ -444,15 +433,18 @@
   line-height: 1;
 }
 
+/* Franja roja destacada — igual en las 6 etiquetas, nunca cambia de color
+   ni de tamaño según el contenido. */
 .nc-label-status {
   text-align: center;
   font-size: 3.19cqh;
   font-weight: 800;
   letter-spacing: 0.04em;
   line-height: 1.15;
-  border: 1.6px solid var(--black);
+  background: #c81e2b;
+  color: var(--white);
   border-radius: 3px;
-  padding: 0.14cqh 0;
+  padding: 0.28cqh 0;
   margin: 0.08cqh 0;
 }
 
@@ -463,6 +455,8 @@
   display: flex;
   gap: 10px;
 }
+.nc-label-row-3 { gap: 6px; }
+.nc-label-row-3 .nc-label-val { font-size: 1.7cqh; }
 .nc-label-row > div {
   flex: 1;
   min-width: 0;
@@ -472,7 +466,7 @@
 }
 
 .nc-label-cap {
-  font-size: 1.3cqh;
+  font-size: 1.25cqh;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--gray-700);
@@ -480,7 +474,7 @@
   line-height: 1.05;
 }
 .nc-label-val {
-  font-size: 2.1cqh;
+  font-size: 1.95cqh;
   font-weight: 700;
   line-height: 1.1;
   white-space: nowrap;
@@ -488,62 +482,89 @@
   text-overflow: ellipsis;
 }
 
+/* Mitad inferior de la etiqueta: columna de defectos (izquierda, más ancha)
+   + columna de origen/inspector/recibido (derecha) — así los 7 defectos
+   tienen ancho completo para no truncarse ni encimarse con otros datos. */
+.nc-label-bottom {
+  display: flex;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 0.2cqh;
+}
+
+.nc-label-defects-col { flex: 0 0 56%; min-width: 0; display: flex; flex-direction: column; }
+
+.nc-label-meta-col {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.15cqh;
+  border-left: 1px solid var(--gray-200);
+  padding-left: 8px;
+}
+.nc-label-meta-col > div { display: flex; flex-direction: column; gap: 0.1cqh; }
+/* Origen/Inspector/Recibido pueden envolver a 2 líneas en vez de truncarse
+   (a diferencia de fecha/LPN/SKU, que son valores cortos de una línea) —
+   nombres de origen largos como "Inspección de línea" caben completos. */
+.nc-label-meta-col .nc-label-val {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.05;
+}
+
 .nc-label-defects-title {
-  font-size: 1.98cqh;
+  font-size: 1.5cqh;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--gray-700);
   font-weight: 700;
-  line-height: 1.15;
-  margin-top: 0.25cqh;
+  line-height: 1.1;
 }
 
-.nc-label-defect-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 8px;
-  row-gap: 0.08cqh;
-  margin-top: 0.08cqh;
+/* 7 defectos SIEMPRE listados en una sola columna (nunca varían cuáles se
+   muestran); sólo cambia qué casilla aparece marcada. white-space normal
+   permite que nombres largos ("Clasificación incorrecta") envuelvan a una
+   segunda línea en vez de truncarse — hay espacio vertical de sobra. */
+.nc-label-defect-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1cqh;
+  margin-top: 0.15cqh;
 }
 
-/* white-space normal (no nowrap/ellipsis): nombres largos como "Clasificación
-   incorrecta" pueden pasar a una segunda línea en vez de truncarse — hay
-   espacio vertical de sobra para ello. align-items:flex-start alinea la
-   casilla con la PRIMERA línea del texto cuando envuelve a dos líneas. */
 .nc-label-defect-item {
   display: flex;
   align-items: flex-start;
-  gap: 4px;
-  font-size: 1.55cqh;
-  line-height: 1.12;
+  gap: 5px;
+  font-size: 1.42cqh;
+  line-height: 1.15;
 }
 
 .nc-label-defect-box {
   flex-shrink: 0;
-  margin-top: 0.12cqh;
-  width: 1.65cqh;
-  height: 1.65cqh;
-  border: 1.3px solid var(--black);
+  margin-top: 0.1cqh;
+  width: 1.55cqh;
+  height: 1.55cqh;
+  border: 1.3px solid var(--gray-500);
   border-radius: 2px;
+  background: var(--white);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4cqh;
-  font-weight: 900;
+  color: transparent;
   line-height: 1;
 }
-.nc-label-defect-item.checked .nc-label-defect-box { background: var(--black); color: var(--white); }
-.nc-label-defect-item.checked .nc-label-cap-strong { font-weight: 800; }
-
-.nc-label-other {
-  font-size: 1.3cqh;
-  line-height: 1.05;
-  font-style: italic;
-  color: var(--gray-700);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.nc-label-defect-item.checked .nc-label-defect-box {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: var(--white);
 }
+.nc-label-defect-name { color: var(--gray-900); }
+.nc-label-defect-item.checked .nc-label-defect-name { font-weight: 800; color: var(--black); }
 
 /* ---------------------------------------------------------------------- */
 /* Modal: confirmación de impresión                                        */
@@ -612,7 +633,6 @@
   .nc-columns { grid-template-columns: 1fr; }
   #nc-col-preview { grid-column: auto; }
   .nc-field-row { flex-direction: column; gap: 14px; }
-  .nc-subnav { flex-direction: column; }
   .nc-history-toolbar { flex-direction: column; align-items: stretch; }
   .nc-history-toolbar input, .nc-history-toolbar select { width: 100%; }
 }
@@ -694,14 +714,13 @@
   .nc-label-logo { height: 0.29in; }
   .nc-label-brand { font-size: 9.2pt; }
   .nc-label-id { font-size: 11.5pt; }
-  .nc-label-status { font-size: 13pt; padding: 1.5pt 0; margin: 1.8pt 0; }
-  .nc-label-cap { font-size: 5.5pt; }
-  .nc-label-val { font-size: 8.5pt; }
-  .nc-label-defects-title { font-size: 8pt; margin-top: 2pt; }
-  .nc-label-defect-grid { row-gap: 1pt; margin-top: 1pt; }
-  .nc-label-defect-item { font-size: 6.3pt; }
-  .nc-label-defect-box { width: 6.8pt; height: 6.8pt; font-size: 5.5pt; }
-  .nc-label-other { font-size: 5.3pt; }
+  .nc-label-status { font-size: 13pt; padding: 3pt 0; margin: 1.8pt 0; }
+  .nc-label-cap { font-size: 5.3pt; }
+  .nc-label-val { font-size: 8.2pt; }
+  .nc-label-row-3 .nc-label-val { font-size: 7.2pt; }
+  .nc-label-defects-title { font-size: 6.3pt; }
+  .nc-label-defect-item { font-size: 6pt; }
+  .nc-label-defect-box { width: 6.5pt; height: 6.5pt; }
 
   * {
     -webkit-print-color-adjust: exact;
