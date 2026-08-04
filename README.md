@@ -58,8 +58,9 @@ primera vez que se usa la API (no hay que correr migraciones a mano).
 Tercer módulo (`/control-calidad.html`), independiente de los dos anteriores
 (su propia tabla `nc_reports` en Neon — ver `db/schema.sql`). Permite
 registrar reportes de producto No Conforme y acumularlos en una bandeja de
-hasta 10 reportes antes de imprimir una sola hoja Carta vertical con 10
-etiquetas (2 columnas x 5 filas, ~9.5 x 5 cm cada una).
+hasta 6 reportes antes de imprimir una sola hoja Carta horizontal con 6
+etiquetas (3 columnas x 2 filas, ~8.6 x 10 cm cada una — llenan casi toda la
+hoja para salir grandes y legibles).
 
 - El folio (`NC-000001`, `NC-000002`, …) se asigna con una secuencia de
   Postgres (`nc_report_seq`) en el momento de agregar el reporte a la

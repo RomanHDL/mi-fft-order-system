@@ -57,6 +57,7 @@
   const trayCounter = document.getElementById('nc-tray-counter');
   const trayExplain = document.getElementById('nc-tray-explain');
   const btnPrintSheet = document.getElementById('nc-btn-print-sheet');
+  const btnPrintSheetLabel = document.getElementById('nc-btn-print-sheet-label');
 
   const printArea = document.getElementById('nc-print-area');
 
@@ -339,7 +340,8 @@
         <input type="checkbox" data-id="${report.id}" ${selectedIds.has(report.id) ? 'checked' : ''} aria-label="Incluir ${escapeHtml(report.report_number)} en la hoja">
         <div class="nc-tray-row-info">
           <span class="nc-tray-row-id">${escapeHtml(report.report_number)}</span>
-          <span class="nc-tray-row-meta">${escapeHtml(report.lpn)} · ${escapeHtml(report.sku)} · ${escapeHtml(report.report_date)}</span>
+          <span class="nc-tray-row-meta">LPN ${escapeHtml(report.lpn)} · SKU ${escapeHtml(report.sku)} · ${escapeHtml(report.report_date)}</span>
+          <span class="nc-tray-row-defects">${escapeHtml(defectsToLabel(report.defects, report.defect_other))}</span>
         </div>
         <button type="button" class="nc-tray-row-remove" data-id="${report.id}">Eliminar</button>`;
       frag.appendChild(row);
@@ -348,9 +350,9 @@
 
     const selectedCount = trayReports.filter((r) => selectedIds.has(r.id)).length;
     btnPrintSheet.disabled = selectedCount === 0;
-    btnPrintSheet.textContent = `Imprimir hoja (${selectedCount} etiqueta${selectedCount === 1 ? '' : 's'})`;
+    btnPrintSheetLabel.textContent = `Imprimir hoja (${selectedCount} etiqueta${selectedCount === 1 ? '' : 's'})`;
     trayExplain.textContent = count > 0
-      ? `Se generará 1 hoja Carta horizontal con ${MAX_TRAY} espacios: ${selectedCount} utilizados y ${MAX_TRAY - selectedCount} disponibles.`
+      ? `Se imprimirán ${selectedCount} de ${MAX_TRAY} etiquetas en la hoja.`
       : '';
   }
 
@@ -422,13 +424,15 @@
       <div class="nc-label" data-id="${report.id}">
         <div class="nc-label-head">
           <img src="/logo-mitech.png" alt="MI" class="nc-label-logo brand-logo">
-          <span class="nc-label-brand">CONTROL DE CALIDAD</span>
           <span class="nc-label-id">${escapeHtml(report.report_number)}</span>
         </div>
+        <div class="nc-label-brand">CONTROL DE CALIDAD</div>
         <div class="nc-label-status">ESTADO: NO CONFORME</div>
         <div class="nc-label-row">
           <div><span class="nc-label-cap">Fecha</span><span class="nc-label-val">${escapeHtml(report.report_date)}</span></div>
           <div><span class="nc-label-cap">LPN</span><span class="nc-label-val">${escapeHtml(report.lpn)}</span></div>
+        </div>
+        <div class="nc-label-row">
           <div><span class="nc-label-cap">SKU</span><span class="nc-label-val">${escapeHtml(report.sku)}</span></div>
         </div>
         <div class="nc-label-defects-title">Defecto detectado</div>
@@ -436,6 +440,8 @@
         ${otherLine}
         <div class="nc-label-row">
           <div><span class="nc-label-cap">Origen</span><span class="nc-label-val">${escapeHtml(report.origin)}</span></div>
+        </div>
+        <div class="nc-label-row">
           <div><span class="nc-label-cap">Inspector</span><span class="nc-label-val">${escapeHtml(report.inspector)}</span></div>
           <div><span class="nc-label-cap">Recibido</span><span class="nc-label-val">${escapeHtml(report.received_by)}</span></div>
         </div>
@@ -443,7 +449,13 @@
   }
 
   function renderEmptySlotHtml() {
-    return '<div class="nc-label nc-label-empty"></div>';
+    return `<div class="nc-label nc-label-empty">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      <span>Espacio disponible</span>
+    </div>`;
   }
 
   // Bandeja normal: llena la hoja con los reportes SELECCIONADOS (casilla en
