@@ -1,0 +1,564 @@
+/* ==========================================================================
+   Control de Calidad - No Conforme — hoja Carta VERTICAL, 10 etiquetas
+   (2 columnas x 5 filas) de ~9.5cm x 5cm cada una. Reutiliza header/botones/
+   tarjetas/modal de styles.css; aquí sólo vive el layout de 3 columnas, el
+   formulario, la bandeja y el diseño de la etiqueta + su @page vertical
+   (independiente de los @page de index.html y reporte-paletizado.html).
+   ========================================================================== */
+
+/* ---------------------------------------------------------------------- */
+/* Barra de opciones (Nuevo Reporte / Bandeja / Historial)                 */
+/* ---------------------------------------------------------------------- */
+
+.nc-subnav {
+  display: flex;
+  gap: 10px;
+  max-width: 1400px;
+  margin: 14px auto 0;
+  padding: 0 16px;
+}
+
+.nc-subnav-item {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--white);
+  border: 1px solid var(--gray-300);
+  border-left: 4px solid var(--brand-blue);
+  border-radius: 4px;
+  padding: 10px 14px;
+  text-decoration: none;
+  color: var(--gray-900);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.nc-subnav-item:hover { background: var(--brand-blue-tint); }
+
+.nc-subnav-count {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--white);
+  background: var(--brand-blue);
+  border-radius: 12px;
+  padding: 2px 10px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Alerta general (errores de red, avisos)                                 */
+/* ---------------------------------------------------------------------- */
+
+.nc-alert {
+  max-width: 1400px;
+  margin: 14px auto 0;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: #fdecec;
+  border: 1px solid #f2b8b8;
+  color: #a01313;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Layout de 3 columnas — aprovecha todo el ancho de pantalla               */
+/* ---------------------------------------------------------------------- */
+
+.nc-main { max-width: 1400px; }
+
+.nc-columns {
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr) minmax(320px, 1.05fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.nc-card {
+  background: var(--white);
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  padding: 16px 18px 18px;
+}
+
+.nc-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--brand-blue);
+}
+
+.nc-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--brand-blue);
+}
+.nc-card-title-row .nc-card-title { margin: 0; padding: 0; border: none; }
+
+.nc-tray-counter {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--brand-blue-dark);
+  background: var(--brand-blue-tint);
+  border-radius: 12px;
+  padding: 3px 12px;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Formulario "Nuevo reporte"                                               */
+/* ---------------------------------------------------------------------- */
+
+.nc-field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.nc-field-row { display: flex; gap: 12px; }
+.nc-field-row .nc-field { flex: 1; min-width: 0; }
+
+.nc-field label {
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--gray-700);
+}
+
+.nc-field input[type="text"],
+.nc-field select {
+  width: 100%;
+  padding: 9px 11px;
+  font-size: 0.92rem;
+  border: 1.5px solid var(--gray-500);
+  border-radius: 3px;
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font);
+}
+.nc-field input[disabled] { background: var(--gray-100); color: var(--gray-700); }
+.nc-field input:focus-visible,
+.nc-field select:focus-visible {
+  outline: 3px solid var(--brand-blue-tint);
+  border-color: var(--brand-blue);
+}
+
+.nc-field-hint { font-size: 0.72rem; color: var(--gray-700); min-height: 1.1em; }
+
+.nc-defect-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin-bottom: 8px;
+}
+
+.nc-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  cursor: pointer;
+}
+.nc-check input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--brand-blue);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.nc-defect-other[disabled] { background: var(--gray-100); color: var(--gray-500); }
+
+.nc-form-actions { margin-top: 4px; }
+.nc-form-actions .btn { flex: 1; }
+
+/* ---------------------------------------------------------------------- */
+/* Bandeja de impresión                                                    */
+/* ---------------------------------------------------------------------- */
+
+.nc-tray-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 480px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.nc-tray-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 0.82rem;
+}
+
+.nc-tray-row input[type="checkbox"] {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--brand-blue);
+  cursor: pointer;
+}
+
+.nc-tray-row-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.nc-tray-row-id { font-weight: 700; color: var(--gray-900); }
+.nc-tray-row-meta {
+  color: var(--gray-700);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nc-tray-row-remove {
+  border: 1.5px solid #a01313;
+  background: var(--white);
+  color: #a01313;
+  font-weight: 700;
+  font-size: 0.75rem;
+  border-radius: 3px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.nc-tray-row-remove:hover { background: #fdecec; }
+
+.nc-tray-empty { color: var(--gray-700); font-size: 0.85rem; padding: 10px 0; text-align: center; }
+.nc-tray-more { color: var(--brand-blue-dark); font-size: 0.82rem; font-weight: 600; margin: 0 0 10px; }
+
+.nc-tray-explain {
+  font-size: 0.8rem;
+  color: var(--gray-700);
+  background: var(--gray-100);
+  border-radius: 4px;
+  padding: 8px 10px;
+  margin: 4px 0 12px;
+}
+
+.nc-btn-print {
+  width: 100%;
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+  font-size: 1rem;
+  padding: 13px 16px;
+}
+.nc-btn-print:hover:not(:disabled) { background: var(--gray-900); }
+
+/* ---------------------------------------------------------------------- */
+/* Vista previa — hoja Carta VERTICAL con 10 etiquetas (2 x 5)              */
+/* ---------------------------------------------------------------------- */
+
+.nc-preview-card { padding: 16px 16px 18px; }
+
+.nc-sheet-wrap {
+  container-type: size;
+  width: min(460px, 100%);
+  aspect-ratio: 8.5 / 11;
+  margin: 0 auto;
+}
+
+.nc-sheet {
+  width: 100%;
+  height: 100%;
+  background: var(--white);
+  border: 1px solid var(--gray-300);
+  padding: 3.11cqh 5.3cqw;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  column-gap: 1.39cqw;
+  row-gap: 1.074cqh;
+}
+
+.nc-label {
+  border: 1px dashed var(--gray-500);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.9cqh 2cqw;
+  overflow: hidden;
+  font-family: var(--font);
+  color: var(--black);
+}
+
+.nc-label.nc-label-empty {
+  border-style: dashed;
+  border-color: var(--gray-200);
+}
+
+.nc-label-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  line-height: 1;
+}
+
+.nc-label-logo { height: 2cqh; width: auto; flex-shrink: 0; }
+
+.nc-label-brand {
+  font-size: 1.0cqh;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--gray-700);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.nc-label-id {
+  font-size: 1.15cqh;
+  font-weight: 800;
+  color: var(--brand-blue-dark);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.nc-label-status {
+  text-align: center;
+  font-size: 1.3cqh;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  border: 1.3px solid var(--black);
+  border-radius: 2px;
+  padding: 0.15cqh 0;
+  margin: 0.15cqh 0;
+}
+
+.nc-label-row {
+  display: flex;
+  gap: 6px;
+  font-size: 1.0cqh;
+  line-height: 1.15;
+}
+.nc-label-row > div { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.nc-label-cap {
+  font-size: 0.75cqh;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--gray-700);
+  font-weight: 700;
+  margin-right: 3px;
+}
+.nc-label-val { font-weight: 700; }
+
+.nc-label-defects-title {
+  font-size: 0.8cqh;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--gray-700);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-top: 0.1cqh;
+}
+
+.nc-label-defect-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 4px;
+  row-gap: 0.05cqh;
+  margin-top: 0.05cqh;
+}
+
+.nc-label-defect-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.9cqh;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nc-label-defect-box {
+  flex-shrink: 0;
+  width: 0.95cqh;
+  height: 0.95cqh;
+  border: 1.1px solid var(--black);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8cqh;
+  font-weight: 900;
+  line-height: 1;
+}
+.nc-label-defect-item.checked .nc-label-defect-box { background: var(--black); color: var(--white); }
+.nc-label-defect-item.checked .nc-label-cap-strong { font-weight: 800; }
+
+.nc-label-other {
+  font-size: 0.85cqh;
+  line-height: 1.1;
+  font-style: italic;
+  color: var(--gray-700);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Modal: confirmación de impresión                                        */
+/* ---------------------------------------------------------------------- */
+
+.nc-confirm-modal { width: min(420px, 92vw); }
+.nc-confirm-modal .modal-body p { font-size: 0.9rem; color: var(--gray-900); margin: 0 0 16px; }
+.nc-confirm-modal .actions { justify-content: flex-end; }
+
+/* ---------------------------------------------------------------------- */
+/* Modal: historial (filtros extra + tabla)                                */
+/* ---------------------------------------------------------------------- */
+
+.nc-history-modal { width: min(1180px, 96vw); }
+
+.nc-history-toolbar select,
+.nc-history-toolbar input[type="text"] {
+  padding: 9px 10px;
+  border: 1.5px solid var(--gray-500);
+  border-radius: 3px;
+  font-size: 0.85rem;
+  font-family: var(--font);
+}
+.nc-history-toolbar input#nc-search-input { flex: 1.4; min-width: 180px; }
+.nc-history-toolbar input#nc-filter-date { flex: 0 0 130px; }
+
+.nc-defects-cell { max-width: 220px; white-space: normal !important; }
+.nc-status-pill {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.nc-status-pill.pendiente { background: var(--brand-blue-tint); color: var(--brand-blue-dark); }
+.nc-status-pill.impreso { background: var(--gray-200); color: var(--gray-900); }
+
+/* ---------------------------------------------------------------------- */
+/* Modal: detalle                                                          */
+/* ---------------------------------------------------------------------- */
+
+.nc-detail-modal { width: min(560px, 94vw); }
+.nc-detail-list { margin: 0; }
+.nc-detail-list dt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--gray-700);
+  font-weight: 700;
+  margin-top: 10px;
+}
+.nc-detail-list dt:first-child { margin-top: 0; }
+.nc-detail-list dd { margin: 2px 0 0; font-size: 0.92rem; color: var(--black); }
+
+/* ---------------------------------------------------------------------- */
+/* Responsive                                                              */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 1180px) {
+  .nc-columns { grid-template-columns: 1fr 1fr; }
+  .nc-col-preview { grid-column: 1 / -1; }
+  .nc-sheet-wrap { width: min(460px, 100%); }
+}
+
+@media (max-width: 780px) {
+  .nc-columns { grid-template-columns: 1fr; }
+  .nc-col-preview { grid-column: auto; }
+  .nc-field-row { flex-direction: column; gap: 14px; }
+  .nc-subnav { flex-direction: column; }
+  .nc-history-toolbar { flex-direction: column; align-items: stretch; }
+  .nc-history-toolbar input, .nc-history-toolbar select { width: 100%; }
+}
+
+/* ==========================================================================
+   IMPRESIÓN — hoja Carta VERTICAL (8.5in x 11in), 10 etiquetas de EXACTAMENTE
+   9.5cm x 5cm (3.7402in x 1.9685in), 2 columnas x 5 filas, sin páginas extra.
+   ========================================================================== */
+
+@page { size: letter portrait; margin: 0; }
+
+@media print {
+  html, body {
+    width: 8.5in;
+    height: 11in;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+  }
+
+  .no-print { display: none !important; }
+
+  body * { visibility: hidden; }
+
+  #nc-sheet-wrap,
+  #nc-sheet-wrap *,
+  #nc-print-area,
+  #nc-print-area * {
+    visibility: visible !important;
+  }
+
+  #nc-sheet-wrap {
+    container-type: normal;
+    position: fixed;
+    inset: 0;
+    width: 8.5in;
+    height: 11in;
+    aspect-ratio: auto;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  #nc-print-area {
+    position: fixed;
+    inset: 0;
+    width: 8.5in;
+    height: 11in;
+    margin: 0;
+    padding: 0.3425in 0.4508in;
+    border: none;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(2, 3.7402in);
+    grid-template-rows: repeat(5, 1.9685in);
+    column-gap: 0.1181in;
+    row-gap: 0.1181in;
+    overflow: hidden;
+    page-break-before: avoid;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    break-before: avoid-page;
+    break-after: avoid-page;
+    break-inside: avoid-page;
+  }
+
+  .nc-label {
+    border: 1px dashed #8a8a8a;
+    padding: 0.04in 0.08in;
+    page-break-inside: avoid;
+    break-inside: avoid-page;
+  }
+
+  .nc-label-logo { height: 0.145in; }
+  .nc-label-brand { font-size: 4.6pt; }
+  .nc-label-id { font-size: 5.8pt; }
+  .nc-label-status { font-size: 6.5pt; padding: 0.75pt 0; margin: 0.9pt 0; }
+  .nc-label-row { font-size: 4.9pt; }
+  .nc-label-cap { font-size: 4pt; }
+  .nc-label-defects-title { font-size: 4pt; margin-top: 1pt; }
+  .nc-label-defect-grid { row-gap: 0.5pt; margin-top: 0.5pt; }
+  .nc-label-defect-item { font-size: 4.5pt; }
+  .nc-label-defect-box { width: 4.8pt; height: 4.8pt; font-size: 4pt; }
+  .nc-label-other { font-size: 4.3pt; }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

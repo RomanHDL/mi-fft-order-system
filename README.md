@@ -53,6 +53,28 @@ primera vez que se usa la API (no hay que correr migraciones a mano).
 - Eliminar registros.
 - Exportar el historial visible a Excel (`.xlsx`).
 
+## Control de Calidad - No Conforme
+
+Tercer módulo (`/control-calidad.html`), independiente de los dos anteriores
+(su propia tabla `nc_reports` en Neon — ver `db/schema.sql`). Permite
+registrar reportes de producto No Conforme y acumularlos en una bandeja de
+hasta 10 reportes antes de imprimir una sola hoja Carta vertical con 10
+etiquetas (2 columnas x 5 filas, ~9.5 x 5 cm cada una).
+
+- El folio (`NC-000001`, `NC-000002`, …) se asigna con una secuencia de
+  Postgres (`nc_report_seq`) en el momento de agregar el reporte a la
+  bandeja — es consecutivo y no se repite ni se pierde al recargar la
+  página, porque la bandeja vive en la base de datos, no en memoria.
+- El SKU se intenta llenar automáticamente a partir del LPN buscando en el
+  propio historial de Control de Calidad (no existe en el proyecto un
+  catálogo/API externa de SKUs por LPN); si el LPN es nuevo, se captura el
+  SKU a mano.
+- Al imprimir la hoja, la app pregunta si la impresión salió bien: si se
+  confirma, los reportes pasan a "Impreso" y salen de la bandeja; si no, se
+  quedan para reintentar.
+- El historial permite buscar, filtrar (fecha, defecto, estado), ver el
+  detalle de un reporte y reimprimir uno ya impreso sin cambiar su folio.
+
 ## Despliegue en Vercel
 
 1. Crea un proyecto en [Neon](https://neon.tech) y copia el **connection
@@ -76,6 +98,8 @@ mi-fft-order-system/
 │   ├── index.html        # UI + etiqueta imprimible
 │   ├── styles.css         # Estilos de pantalla + @media print
 │   ├── app.js              # Lógica: QR en vivo, historial, exportar Excel
+│   ├── reporte-paletizado.html / reporte.css / reporte.js   # Módulo 2
+│   ├── control-calidad.html / control-calidad.css / control-calidad.js  # Módulo 3
 │   ├── logo-mitech.png     # Logo oficial (reemplazable)
 │   └── vendor/              # qrcode.min.js y xlsx.full.min.js (sin CDN)
 ├── db/schema.sql          # Esquema de referencia de la tabla `labels`

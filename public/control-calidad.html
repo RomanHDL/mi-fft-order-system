@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Control de Calidad - No Conforme · Mi Technologies</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/control-calidad.css">
+</head>
+<body>
+
+  <!-- ============================== HEADER ============================== -->
+  <header class="no-print app-header">
+    <div class="header-left">
+      <img src="/logo-mitech.png" alt="Mi Technologies" class="header-logo brand-logo">
+      <div class="header-titles">
+        <h1>Control de Calidad - No Conforme</h1>
+        <p class="subtitle">Mi Technologies International S.A. de C.V. · Área FFT TV</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="/" class="btn btn-header">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Etiquetas FFT</span>
+      </a>
+      <button type="button" id="nc-btn-history" class="btn btn-header">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <polyline points="12 7 12 12 16 14"></polyline>
+        </svg>
+        <span>Historial de Reportes</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ======================== BARRA DE OPCIONES ======================== -->
+  <nav class="no-print nc-subnav" aria-label="Secciones de Control de Calidad">
+    <a href="#nc-col-form" class="nc-subnav-item">
+      <span class="nc-subnav-label">Nuevo Reporte</span>
+    </a>
+    <a href="#nc-col-tray" class="nc-subnav-item">
+      <span class="nc-subnav-label">Bandeja de Impresión</span>
+      <span class="nc-subnav-count" id="nc-subnav-count">0 / 10</span>
+    </a>
+    <a href="#nc-col-preview" class="nc-subnav-item">
+      <span class="nc-subnav-label">Historial</span>
+    </a>
+  </nav>
+
+  <main class="main-content nc-main">
+
+    <p class="nc-alert no-print hidden" id="nc-alert" role="status" aria-live="polite"></p>
+
+    <div class="nc-columns">
+
+      <!-- ============================ COLUMNA 1 ============================ -->
+      <section class="nc-card no-print" id="nc-col-form" aria-label="Nuevo reporte de No Conforme">
+        <h2 class="nc-card-title">1. Nuevo reporte de No Conforme</h2>
+
+        <form id="nc-form" novalidate>
+          <div class="nc-field">
+            <label for="nc-report-number">ID Reporte</label>
+            <input id="nc-report-number" type="text" value="NC-000001" disabled>
+          </div>
+
+          <div class="nc-field-row">
+            <div class="nc-field">
+              <label for="nc-date">Fecha</label>
+              <input id="nc-date" name="reportDate" type="text" placeholder="DD/MM/AAAA"
+                     autocomplete="off" spellcheck="false" inputmode="numeric" maxlength="10">
+            </div>
+            <div class="nc-field">
+              <label for="nc-lpn">LPN</label>
+              <input id="nc-lpn" name="lpn" type="text" placeholder="Escribe o escanea el LPN"
+                     autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+
+          <div class="nc-field">
+            <label for="nc-sku">SKU</label>
+            <input id="nc-sku" name="sku" type="text" placeholder="Se busca automáticamente por LPN"
+                   autocomplete="off" spellcheck="false">
+            <span class="nc-field-hint" id="nc-sku-hint"></span>
+          </div>
+
+          <div class="nc-field">
+            <label>Defecto detectado</label>
+            <div class="nc-defect-grid" id="nc-defect-grid">
+              <label class="nc-check"><input type="checkbox" name="defect" value="duplicado"><span>Duplicado</span></label>
+              <label class="nc-check"><input type="checkbox" name="defect" value="pulgada_incorrecta"><span>Pulgada incorrecta</span></label>
+              <label class="nc-check"><input type="checkbox" name="defect" value="clasificacion_incorrecta"><span>Clasificación incorrecta</span></label>
+              <label class="nc-check"><input type="checkbox" name="defect" value="marca_incorrecta"><span>Marca incorrecta</span></label>
+              <label class="nc-check"><input type="checkbox" name="defect" value="caida"><span>Caída</span></label>
+              <label class="nc-check"><input type="checkbox" name="defect" value="salida"><span>Salida</span></label>
+              <label class="nc-check"><input type="checkbox" name="defect" value="otro"><span>Otro</span></label>
+            </div>
+            <input id="nc-defect-other" type="text" placeholder="Especifica el defecto…" disabled class="nc-defect-other">
+          </div>
+
+          <div class="nc-field">
+            <label for="nc-origin">Origen del Hallazgo</label>
+            <select id="nc-origin" name="origin">
+              <option value="">Selecciona…</option>
+              <option value="Producción">Producción</option>
+              <option value="Paletizado FFT">Paletizado FFT</option>
+              <option value="Almacén">Almacén</option>
+              <option value="Calidad">Calidad</option>
+              <option value="Recibo">Recibo</option>
+              <option value="Embarques">Embarques</option>
+              <option value="Otro">Otro</option>
+            </select>
+          </div>
+
+          <div class="nc-field-row">
+            <div class="nc-field">
+              <label for="nc-inspector">Inspector</label>
+              <input id="nc-inspector" name="inspector" type="text" placeholder="Nombre del inspector"
+                     autocomplete="off" spellcheck="false">
+            </div>
+            <div class="nc-field">
+              <label for="nc-received-by">Firma de Recibido</label>
+              <input id="nc-received-by" name="receivedBy" type="text" placeholder="Nombre de quien recibe"
+                     autocomplete="off" spellcheck="false">
+            </div>
+          </div>
+
+          <p class="form-msg" id="nc-form-msg" role="status" aria-live="polite"></p>
+
+          <div class="actions nc-form-actions">
+            <button type="button" id="nc-btn-clear" class="btn btn-ghost">Limpiar</button>
+            <button type="submit" id="nc-btn-add" class="btn btn-primary">Agregar a bandeja</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ============================ COLUMNA 2 ============================ -->
+      <section class="nc-card no-print" id="nc-col-tray" aria-label="Bandeja de impresión">
+        <div class="nc-card-title-row">
+          <h2 class="nc-card-title">2. Bandeja de impresión</h2>
+          <span class="nc-tray-counter" id="nc-tray-counter">0 / 10 etiquetas</span>
+        </div>
+
+        <div class="nc-tray-list" id="nc-tray-list"></div>
+        <p class="nc-tray-empty" id="nc-tray-empty">Sin reportes en la bandeja. Agrega uno desde el formulario.</p>
+        <p class="nc-tray-more hidden" id="nc-tray-more">Agregar más reportes — hay espacio disponible en la hoja.</p>
+
+        <p class="nc-tray-explain" id="nc-tray-explain"></p>
+
+        <button type="button" id="nc-btn-print-sheet" class="btn nc-btn-print" disabled>Imprimir hoja (0 etiquetas)</button>
+      </section>
+
+      <!-- ============================ COLUMNA 3 ============================ -->
+      <section class="nc-card nc-preview-card" id="nc-col-preview" aria-label="Vista previa de impresión">
+        <h2 class="nc-card-title no-print">3. Vista previa de impresión (Carta - 10 etiquetas por hoja)</h2>
+
+        <div class="nc-sheet-wrap" id="nc-sheet-wrap">
+          <div class="nc-sheet" id="nc-print-area"><!-- 10 slots inyectados por JS --></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="no-print app-footer">
+    Mi Technologies Internacional S.A. de C.V. · Sistema interno · Área FFT TV
+  </footer>
+
+  <!-- ==================== MODAL: ¿Impresión correcta? ==================== -->
+  <div class="modal-backdrop no-print hidden" id="nc-confirm-backdrop"></div>
+  <div class="modal nc-confirm-modal no-print hidden" id="nc-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="nc-confirm-title">
+    <div class="modal-header">
+      <h2 id="nc-confirm-title">¿La impresión fue correcta?</h2>
+    </div>
+    <div class="modal-body">
+      <p>Si confirmas, los reportes seleccionados pasarán a "Impreso" y saldrán de la bandeja. Si la impresión falló o la cancelaste, permanecerán en la bandeja para reintentar.</p>
+      <div class="actions">
+        <button type="button" id="nc-btn-print-failed" class="btn btn-ghost">No, falló / cancelé</button>
+        <button type="button" id="nc-btn-print-ok" class="btn btn-primary">Sí, se imprimió bien</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ MODAL: HISTORIAL ============================ -->
+  <div class="modal-backdrop no-print hidden" id="nc-history-backdrop"></div>
+  <div class="modal history-modal nc-history-modal no-print hidden" id="nc-history-modal" role="dialog" aria-modal="true" aria-labelledby="nc-history-title">
+    <div class="modal-header">
+      <h2 id="nc-history-title">Historial de Reportes</h2>
+      <button type="button" id="nc-btn-close-history" class="modal-close" aria-label="Cerrar historial">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="history-toolbar nc-history-toolbar">
+        <input id="nc-search-input" type="text" placeholder="Buscar por ID, LPN o SKU…">
+        <input id="nc-filter-date" type="text" placeholder="Fecha DD/MM/AAAA" maxlength="10" inputmode="numeric">
+        <select id="nc-filter-defect">
+          <option value="">Todos los defectos</option>
+          <option value="duplicado">Duplicado</option>
+          <option value="pulgada_incorrecta">Pulgada incorrecta</option>
+          <option value="clasificacion_incorrecta">Clasificación incorrecta</option>
+          <option value="marca_incorrecta">Marca incorrecta</option>
+          <option value="caida">Caída</option>
+          <option value="salida">Salida</option>
+          <option value="otro">Otro</option>
+        </select>
+        <select id="nc-filter-status">
+          <option value="all">Todos los estados</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="impreso">Impreso</option>
+        </select>
+        <button type="button" id="nc-btn-refresh-history" class="btn btn-small">Actualizar</button>
+      </div>
+      <div class="table-wrap">
+        <table id="nc-history-table">
+          <thead>
+            <tr>
+              <th>ID Reporte</th>
+              <th>Fecha</th>
+              <th>LPN</th>
+              <th>SKU</th>
+              <th>Defectos</th>
+              <th>Origen</th>
+              <th>Inspector</th>
+              <th>Recibido</th>
+              <th>Estado</th>
+              <th>Impresión</th>
+              <th>Reimp.</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="nc-history-body"></tbody>
+        </table>
+      </div>
+      <p class="empty-msg hidden" id="nc-history-empty">Sin reportes registrados todavía.</p>
+      <p class="empty-msg hidden" id="nc-history-error">No se pudo cargar el historial. Verifica la conexión / DATABASE_URL.</p>
+    </div>
+  </div>
+
+  <!-- ============================ MODAL: DETALLE ============================ -->
+  <div class="modal-backdrop no-print hidden" id="nc-detail-backdrop"></div>
+  <div class="modal nc-detail-modal no-print hidden" id="nc-detail-modal" role="dialog" aria-modal="true" aria-labelledby="nc-detail-title">
+    <div class="modal-header">
+      <h2 id="nc-detail-title">Detalle del reporte</h2>
+      <button type="button" id="nc-btn-close-detail" class="modal-close" aria-label="Cerrar detalle">✕</button>
+    </div>
+    <div class="modal-body">
+      <dl class="nc-detail-list" id="nc-detail-body"></dl>
+    </div>
+  </div>
+
+  <script src="/control-calidad.js"></script>
+</body>
+</html>
