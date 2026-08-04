@@ -374,8 +374,12 @@
   trayList.addEventListener('click', (e) => {
     const btn = e.target.closest('button.nc-tray-row-remove');
     if (!btn) return;
-    const id = Number(btn.dataset.id);
-    const report = trayReports.find((r) => r.id === id);
+    // Los IDs que devuelve Neon llegan como string (bigint serializado);
+    // comparar como string evita fallos de igualdad estricta contra number
+    // (mismo patrón que app.js). Sin esto, el botón "no hacía nada": el
+    // find() nunca encontraba el reporte y la función salía en silencio.
+    const id = btn.dataset.id;
+    const report = trayReports.find((r) => String(r.id) === String(id));
     if (!report) return;
     pendingDeleteId = id;
     deleteConfirmBody.textContent = `El reporte "${report.report_number}" se quitará de la cola de impresión. Esta acción no se puede deshacer.`;
@@ -414,7 +418,7 @@
       const res = await fetch('/api/nc-reports/' + id, { method: 'DELETE' });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.error || 'No se pudo eliminar el reporte.');
-      trayReports = trayReports.filter((r) => r.id !== id);
+      trayReports = trayReports.filter((r) => String(r.id) !== String(id));
       renderTray();
       renderTrayPreview();
       pendingDeleteId = null;
@@ -579,8 +583,8 @@
         });
         const data = await res.json();
         if (!res.ok || !data.success) throw new Error(data.error || 'No se pudo registrar la impresión.');
-        const printedIds = new Set(data.reports.map((r) => r.id));
-        trayReports = trayReports.filter((r) => !printedIds.has(r.id));
+        const printedIds = new Set(data.reports.map((r) => String(r.id)));
+        trayReports = trayReports.filter((r) => !printedIds.has(String(r.id)));
         renderTray();
         renderTrayPreview();
         setFormMsg(`${printedIds.size} reporte(s) marcados como impresos.`, false);
@@ -714,8 +718,10 @@
   historyBody.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
-    const id = Number(btn.dataset.id);
-    const report = historyReports.find((r) => r.id === id);
+    // Mismo motivo que en el manejador de eliminar: los IDs de Neon llegan
+    // como string, hay que comparar como string.
+    const id = btn.dataset.id;
+    const report = historyReports.find((r) => String(r.id) === String(id));
     if (!report) return;
 
     if (btn.dataset.action === 'detail') {
