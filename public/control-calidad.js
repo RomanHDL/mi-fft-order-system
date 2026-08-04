@@ -14,7 +14,7 @@
 (function () {
   'use strict';
 
-  const MAX_TRAY = 10;
+  const MAX_TRAY = 6;
   const DATE_PATTERN = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
   const LPN_DEBOUNCE_MS = 400;
 
@@ -350,7 +350,7 @@
     btnPrintSheet.disabled = selectedCount === 0;
     btnPrintSheet.textContent = `Imprimir hoja (${selectedCount} etiqueta${selectedCount === 1 ? '' : 's'})`;
     trayExplain.textContent = count > 0
-      ? `Se generará 1 hoja Carta con ${MAX_TRAY} espacios: ${selectedCount} utilizados y ${MAX_TRAY - selectedCount} disponibles.`
+      ? `Se generará 1 hoja Carta horizontal con ${MAX_TRAY} espacios: ${selectedCount} utilizados y ${MAX_TRAY - selectedCount} disponibles.`
       : '';
   }
 
@@ -711,7 +711,7 @@
   previousDateValue = dateInput.value;
   syncDefectOther();
   refreshNextNumberPreview();
-  // Pinta de inmediato la hoja con los 10 espacios vacíos (no espera a que
+  // Pinta de inmediato la hoja con los 6 espacios vacíos (no espera a que
   // cargue la bandeja) — si loadTray() falla por conexión, la vista previa
   // no se queda en blanco.
   renderTray();

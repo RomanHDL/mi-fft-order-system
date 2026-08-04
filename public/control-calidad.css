@@ -1,8 +1,8 @@
 /* ==========================================================================
-   Control de Calidad - No Conforme — hoja Carta VERTICAL, 10 etiquetas
-   (2 columnas x 5 filas) de ~9.5cm x 5cm cada una. Reutiliza header/botones/
+   Control de Calidad - No Conforme — hoja Carta HORIZONTAL, 6 etiquetas
+   (3 columnas x 2 filas) de ~8.75cm x 5cm cada una. Reutiliza header/botones/
    tarjetas/modal de styles.css; aquí sólo vive el layout de 3 columnas, el
-   formulario, la bandeja y el diseño de la etiqueta + su @page vertical
+   formulario, la bandeja y el diseño de la etiqueta + su @page horizontal
    (independiente de los @page de index.html y reporte-paletizado.html).
    ========================================================================== */
 
@@ -251,29 +251,33 @@
 .nc-btn-print:hover:not(:disabled) { background: var(--gray-900); }
 
 /* ---------------------------------------------------------------------- */
-/* Vista previa — hoja Carta VERTICAL con 10 etiquetas (2 x 5)              */
+/* Vista previa — hoja Carta HORIZONTAL con 6 etiquetas (3 x 2)             */
 /* ---------------------------------------------------------------------- */
 
 .nc-preview-card { padding: 16px 16px 18px; }
 
 .nc-sheet-wrap {
   container-type: size;
-  width: min(460px, 100%);
-  aspect-ratio: 8.5 / 11;
+  width: min(620px, 100%);
+  aspect-ratio: 11 / 8.5;
   margin: 0 auto;
 }
 
+/* Hoja Carta HORIZONTAL (11in x 8.5in), 6 etiquetas en 3 columnas x 2 filas.
+   Cada etiqueta física mide ~8.75cm x 5cm — ver el bloque @media print para
+   las medidas exactas en pulgadas; estos porcentajes (cqw/cqh, relativos al
+   ancho/alto de ESTA hoja) reproducen la misma proporción en pantalla. */
 .nc-sheet {
   width: 100%;
   height: 100%;
   background: var(--white);
   border: 1px solid var(--gray-300);
-  padding: 3.11cqh 5.3cqw;
+  padding: 26.15cqh 1.95cqw;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(5, 1fr);
-  column-gap: 1.39cqw;
-  row-gap: 1.074cqh;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  column-gap: 1.07cqw;
+  row-gap: 1.39cqh;
 }
 
 .nc-label {
@@ -281,7 +285,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 0.9cqh 2cqw;
+  padding: 1.16cqh 1.42cqw;
   overflow: hidden;
   font-family: var(--font);
   color: var(--black);
@@ -300,10 +304,10 @@
   line-height: 1;
 }
 
-.nc-label-logo { height: 2cqh; width: auto; flex-shrink: 0; }
+.nc-label-logo { height: 2.59cqh; width: auto; flex-shrink: 0; }
 
 .nc-label-brand {
-  font-size: 1.0cqh;
+  font-size: 1.29cqh;
   font-weight: 800;
   letter-spacing: 0.02em;
   color: var(--gray-700);
@@ -312,7 +316,7 @@
 }
 
 .nc-label-id {
-  font-size: 1.15cqh;
+  font-size: 1.49cqh;
   font-weight: 800;
   color: var(--brand-blue-dark);
   white-space: nowrap;
@@ -321,26 +325,26 @@
 
 .nc-label-status {
   text-align: center;
-  font-size: 1.3cqh;
+  font-size: 1.68cqh;
   font-weight: 800;
   letter-spacing: 0.04em;
   line-height: 1.1;
   border: 1.3px solid var(--black);
   border-radius: 2px;
-  padding: 0.15cqh 0;
-  margin: 0.15cqh 0;
+  padding: 0.19cqh 0;
+  margin: 0.19cqh 0;
 }
 
 .nc-label-row {
   display: flex;
   gap: 6px;
-  font-size: 1.0cqh;
+  font-size: 1.29cqh;
   line-height: 1.15;
 }
 .nc-label-row > div { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .nc-label-cap {
-  font-size: 0.75cqh;
+  font-size: 0.97cqh;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--gray-700);
@@ -350,28 +354,28 @@
 .nc-label-val { font-weight: 700; }
 
 .nc-label-defects-title {
-  font-size: 0.8cqh;
+  font-size: 1.04cqh;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--gray-700);
   font-weight: 700;
   line-height: 1.1;
-  margin-top: 0.1cqh;
+  margin-top: 0.13cqh;
 }
 
 .nc-label-defect-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 4px;
-  row-gap: 0.05cqh;
-  margin-top: 0.05cqh;
+  row-gap: 0.06cqh;
+  margin-top: 0.06cqh;
 }
 
 .nc-label-defect-item {
   display: flex;
   align-items: center;
   gap: 3px;
-  font-size: 0.9cqh;
+  font-size: 1.16cqh;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
@@ -380,13 +384,13 @@
 
 .nc-label-defect-box {
   flex-shrink: 0;
-  width: 0.95cqh;
-  height: 0.95cqh;
+  width: 1.23cqh;
+  height: 1.23cqh;
   border: 1.1px solid var(--black);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8cqh;
+  font-size: 1.04cqh;
   font-weight: 900;
   line-height: 1;
 }
@@ -394,7 +398,7 @@
 .nc-label-defect-item.checked .nc-label-cap-strong { font-weight: 800; }
 
 .nc-label-other {
-  font-size: 0.85cqh;
+  font-size: 1.1cqh;
   line-height: 1.1;
   font-style: italic;
   color: var(--gray-700);
@@ -476,16 +480,19 @@
 }
 
 /* ==========================================================================
-   IMPRESIÓN — hoja Carta VERTICAL (8.5in x 11in), 10 etiquetas de EXACTAMENTE
-   9.5cm x 5cm (3.7402in x 1.9685in), 2 columnas x 5 filas, sin páginas extra.
+   IMPRESIÓN — hoja Carta HORIZONTAL (11in x 8.5in), 6 etiquetas de
+   EXACTAMENTE 8.75cm x 5cm (3.4449in x 1.9685in), 3 columnas x 2 filas,
+   sin páginas extra. Márgenes calculados para centrar la cuadrícula con
+   espacio seguro de impresora: 0.2146in a los lados, 2.2224in arriba/abajo
+   (el alto de etiqueta pedido, ~5cm, es menor que el alto de la hoja).
    ========================================================================== */
 
-@page { size: letter portrait; margin: 0; }
+@page { size: letter landscape; margin: 0; }
 
 @media print {
   html, body {
-    width: 8.5in;
-    height: 11in;
+    width: 11in;
+    height: 8.5in;
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
@@ -507,8 +514,8 @@
     container-type: normal;
     position: fixed;
     inset: 0;
-    width: 8.5in;
-    height: 11in;
+    width: 11in;
+    height: 8.5in;
     aspect-ratio: auto;
     margin: 0;
     padding: 0;
@@ -518,15 +525,15 @@
   #nc-print-area {
     position: fixed;
     inset: 0;
-    width: 8.5in;
-    height: 11in;
+    width: 11in;
+    height: 8.5in;
     margin: 0;
-    padding: 0.3425in 0.4508in;
+    padding: 2.2224in 0.2146in;
     border: none;
     box-sizing: border-box;
     display: grid;
-    grid-template-columns: repeat(2, 3.7402in);
-    grid-template-rows: repeat(5, 1.9685in);
+    grid-template-columns: repeat(3, 3.4449in);
+    grid-template-rows: repeat(2, 1.9685in);
     column-gap: 0.1181in;
     row-gap: 0.1181in;
     overflow: hidden;
@@ -540,7 +547,7 @@
 
   .nc-label {
     border: 1px dashed #8a8a8a;
-    padding: 0.04in 0.08in;
+    padding: 0.04in 0.075in;
     page-break-inside: avoid;
     break-inside: avoid-page;
   }
