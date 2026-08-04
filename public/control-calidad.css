@@ -107,6 +107,15 @@
 .nc-btn-blue:hover:not(:disabled) { background: var(--brand-blue-dark); border-color: var(--brand-blue-dark); }
 .nc-btn-blue:disabled { opacity: 0.55; cursor: not-allowed; }
 
+/* Botón rojo (confirmar una eliminación dentro del modal propio). */
+.nc-btn-danger {
+  background: #a01313;
+  color: var(--white);
+  border-color: #a01313;
+}
+.nc-btn-danger:hover:not(:disabled) { background: #7a0e0e; border-color: #7a0e0e; }
+.nc-btn-danger:disabled { opacity: 0.55; cursor: not-allowed; }
+
 /* ---------------------------------------------------------------------- */
 /* Formulario "Nuevo reporte"                                               */
 /* ---------------------------------------------------------------------- */

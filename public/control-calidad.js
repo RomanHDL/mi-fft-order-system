@@ -67,6 +67,12 @@
   const btnPrintOk = document.getElementById('nc-btn-print-ok');
   const btnPrintFailed = document.getElementById('nc-btn-print-failed');
 
+  const deleteConfirmBackdrop = document.getElementById('nc-delete-confirm-backdrop');
+  const deleteConfirmModal = document.getElementById('nc-delete-confirm-modal');
+  const deleteConfirmBody = document.getElementById('nc-delete-confirm-body');
+  const btnDeleteCancel = document.getElementById('nc-btn-delete-cancel');
+  const btnDeleteConfirm = document.getElementById('nc-btn-delete-confirm');
+
   const btnHistory = document.getElementById('nc-btn-history');
   const historyBackdrop = document.getElementById('nc-history-backdrop');
   const historyModal = document.getElementById('nc-history-modal');
@@ -97,6 +103,7 @@
   let historyReports = [];
   let pendingPrintIds = null;     // ids que se marcarán 'impreso' al confirmar
   let pendingReprintReport = null; // reporte que se está reimprimiendo (uno solo)
+  let pendingDeleteId = null;     // id del reporte que se eliminará al confirmar en el modal
   let searchTimer = null;
   let lpnLookupToken = 0;
   let savedScrollY = 0;
@@ -359,15 +366,50 @@
     btnPrintSheetLabel.textContent = `Imprimir Hoja (${count} etiqueta${count === 1 ? '' : 's'})`;
   }
 
-  trayList.addEventListener('click', async (e) => {
+  // El clic sólo ABRE el modal propio de confirmación (nunca confirm()
+  // nativo — en varios navegadores, tras varios diálogos nativos seguidos,
+  // Chrome empieza a autorrechazar confirm()/alert() sin mostrar nada,
+  // haciendo que el botón "no haga nada" en apariencia). La eliminación
+  // real ocurre sólo al presionar "Eliminar" dentro del modal.
+  trayList.addEventListener('click', (e) => {
     const btn = e.target.closest('button.nc-tray-row-remove');
     if (!btn) return;
     const id = Number(btn.dataset.id);
     const report = trayReports.find((r) => r.id === id);
     if (!report) return;
-    if (!confirm(`¿Eliminar el reporte "${report.report_number}" de la cola? Esta acción no se puede deshacer.`)) return;
+    pendingDeleteId = id;
+    deleteConfirmBody.textContent = `El reporte "${report.report_number}" se quitará de la cola de impresión. Esta acción no se puede deshacer.`;
+    openDeleteConfirmModal();
+  });
 
-    btn.disabled = true;
+  function openDeleteConfirmModal() {
+    deleteConfirmBackdrop.classList.remove('hidden');
+    deleteConfirmModal.classList.remove('hidden');
+  }
+  function closeDeleteConfirmModal() {
+    deleteConfirmBackdrop.classList.add('hidden');
+    deleteConfirmModal.classList.add('hidden');
+  }
+
+  btnDeleteCancel.addEventListener('click', () => {
+    pendingDeleteId = null;
+    closeDeleteConfirmModal();
+  });
+  deleteConfirmBackdrop.addEventListener('click', () => {
+    pendingDeleteId = null;
+    closeDeleteConfirmModal();
+  });
+
+  // Elimina por ID (nunca por índice/posición) contra el almacenamiento
+  // real (Neon), y actualiza el estado local de forma inmutable con
+  // .filter() — nunca se muta trayReports directamente. Al quitar un
+  // elemento, el resto conserva su orden y las posiciones 1-6 de la vista
+  // previa se recalculan solas (renderTray/renderTrayPreview iteran el
+  // arreglo ya filtrado en su nuevo orden).
+  btnDeleteConfirm.addEventListener('click', async () => {
+    const id = pendingDeleteId;
+    if (id == null) { closeDeleteConfirmModal(); return; }
+    btnDeleteConfirm.disabled = true;
     try {
       const res = await fetch('/api/nc-reports/' + id, { method: 'DELETE' });
       const data = await res.json();
@@ -375,10 +417,13 @@
       trayReports = trayReports.filter((r) => r.id !== id);
       renderTray();
       renderTrayPreview();
+      pendingDeleteId = null;
+      closeDeleteConfirmModal();
     } catch (err) {
       console.error('[Eliminar de cola]', err);
-      alert('No se pudo eliminar el reporte: ' + err.message);
-      btn.disabled = false;
+      setAlert('No se pudo eliminar el reporte: ' + err.message);
+    } finally {
+      btnDeleteConfirm.disabled = false;
     }
   });
 
@@ -719,6 +764,7 @@
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
     if (!detailModal.classList.contains('hidden')) closeDetailModal();
+    else if (!deleteConfirmModal.classList.contains('hidden')) { pendingDeleteId = null; closeDeleteConfirmModal(); }
     else if (!confirmModal.classList.contains('hidden')) { /* requiere decisión explícita */ }
     else if (!historyModal.classList.contains('hidden')) closeHistoryModal();
   });

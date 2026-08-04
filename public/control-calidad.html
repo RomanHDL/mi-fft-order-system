@@ -227,6 +227,21 @@
     </div>
   </div>
 
+  <!-- ==================== MODAL: ¿Eliminar etiqueta? ==================== -->
+  <div class="modal-backdrop no-print hidden" id="nc-delete-confirm-backdrop"></div>
+  <div class="modal nc-confirm-modal no-print hidden" id="nc-delete-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="nc-delete-confirm-title">
+    <div class="modal-header">
+      <h2 id="nc-delete-confirm-title">¿Eliminar esta etiqueta de la cola de impresión?</h2>
+    </div>
+    <div class="modal-body">
+      <p id="nc-delete-confirm-body"></p>
+      <div class="actions">
+        <button type="button" id="nc-btn-delete-cancel" class="btn btn-ghost">Cancelar</button>
+        <button type="button" id="nc-btn-delete-confirm" class="btn nc-btn-danger">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ============================ MODAL: HISTORIAL ============================ -->
   <div class="modal-backdrop no-print hidden" id="nc-history-backdrop"></div>
   <div class="modal history-modal nc-history-modal no-print hidden" id="nc-history-modal" role="dialog" aria-modal="true" aria-labelledby="nc-history-title">
