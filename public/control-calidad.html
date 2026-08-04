@@ -15,18 +15,19 @@
       <img src="/logo-mitech.png" alt="Mi Technologies" class="header-logo brand-logo">
       <div class="header-titles">
         <h1>Control de Calidad - No Conforme</h1>
-        <p class="subtitle">Mi Technologies International S.A. de C.V. · Área FFT TV</p>
+        <p class="subtitle">Genera e imprime etiquetas de reportes No Conforme (FFT) en formato Carta horizontal (6 por hoja).</p>
       </div>
     </div>
     <div class="header-right">
       <a href="/" class="btn btn-header">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
         </svg>
         <span>Etiquetas FFT</span>
       </a>
-      <button type="button" id="nc-btn-history" class="btn btn-header">
+      <button type="button" id="nc-btn-history" class="btn btn-header-ghost">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="9"></circle>
           <polyline points="12 7 12 12 16 14"></polyline>
@@ -43,36 +44,17 @@
     <div class="nc-columns">
 
       <!-- ============================ COLUMNA 1 ============================ -->
-      <section class="nc-card no-print" id="nc-col-form" aria-label="Nuevo reporte de No Conforme">
-        <h2 class="nc-card-title">
-          <span class="nc-card-icon">
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-              <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"></path>
-              <line x1="9" y1="13" x2="15" y2="13"></line>
-              <line x1="9" y1="17" x2="15" y2="17"></line>
-            </svg>
-          </span>
-          <span>1. Nuevo reporte de No Conforme</span>
-        </h2>
-
-        <h3 class="nc-section-subtitle">Información del reporte</h3>
+      <section class="nc-card no-print" id="nc-col-form" aria-label="Datos del Reporte">
+        <h2 class="nc-card-title nc-card-title-plain">Datos del Reporte</h2>
 
         <form id="nc-form" novalidate>
-          <div class="nc-field">
-            <label for="nc-report-number">ID Reporte</label>
-            <div class="nc-field-icon-wrap">
-              <input id="nc-report-number" type="text" value="NC-000001" disabled>
-              <svg class="nc-field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.57 3.24L3.24 9.57A2 2 0 0 0 3.83 11l9.58 9.59a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.83Z"></path>
-                <circle cx="8.5" cy="8.5" r="1.2"></circle>
-              </svg>
-            </div>
-          </div>
-
           <div class="nc-field-row">
             <div class="nc-field">
-              <label for="nc-date">Fecha</label>
+              <label for="nc-report-number">ID Reporte: <span class="nc-required">*</span></label>
+              <input id="nc-report-number" type="text" value="NC-000001" disabled class="nc-field-plain-disabled">
+            </div>
+            <div class="nc-field">
+              <label for="nc-date">Fecha: <span class="nc-required">*</span></label>
               <div class="nc-field-icon-wrap">
                 <input id="nc-date" name="reportDate" type="text" placeholder="DD/MM/AAAA"
                        autocomplete="off" spellcheck="false" inputmode="numeric" maxlength="10">
@@ -84,37 +66,24 @@
                 </svg>
               </div>
             </div>
-            <div class="nc-field">
-              <label for="nc-lpn">LPN</label>
-              <div class="nc-field-icon-wrap">
-                <input id="nc-lpn" name="lpn" type="text" placeholder="Escanea o escribe el LPN"
-                       autocomplete="off" spellcheck="false">
-                <svg class="nc-field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M3 7V5a2 2 0 0 1 2-2h2"></path>
-                  <path d="M17 3h2a2 2 0 0 1 2 2v2"></path>
-                  <path d="M21 17v2a2 2 0 0 1-2 2h-2"></path>
-                  <path d="M7 21H5a2 2 0 0 1-2-2v-2"></path>
-                  <line x1="7" y1="12" x2="17" y2="12"></line>
-                </svg>
-              </div>
-            </div>
           </div>
 
-          <div class="nc-field">
-            <label for="nc-sku">SKU</label>
-            <div class="nc-field-icon-wrap">
+          <div class="nc-field-row">
+            <div class="nc-field">
+              <label for="nc-lpn">LPN: <span class="nc-required">*</span></label>
+              <input id="nc-lpn" name="lpn" type="text" placeholder="Escanea o escribe el LPN"
+                     autocomplete="off" spellcheck="false">
+            </div>
+            <div class="nc-field">
+              <label for="nc-sku">SKU: <span class="nc-required">*</span></label>
               <input id="nc-sku" name="sku" type="text" placeholder="Se busca automáticamente por LPN"
                      autocomplete="off" spellcheck="false">
-              <svg class="nc-field-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="7"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
+              <span class="nc-field-hint" id="nc-sku-hint"></span>
             </div>
-            <span class="nc-field-hint" id="nc-sku-hint"></span>
           </div>
 
           <div class="nc-field">
-            <label>Defecto detectado <span class="nc-label-hint">(selecciona uno o varios)</span></label>
+            <label>Defecto detectado: <span class="nc-required">*</span></label>
             <div class="nc-defect-grid" id="nc-defect-grid">
               <label class="nc-check"><input type="checkbox" name="defect" value="duplicado"><span>Duplicado</span></label>
               <label class="nc-check"><input type="checkbox" name="defect" value="pulgada_incorrecta"><span>Pulgada incorrecta</span></label>
@@ -122,22 +91,25 @@
               <label class="nc-check"><input type="checkbox" name="defect" value="marca_incorrecta"><span>Marca incorrecta</span></label>
               <label class="nc-check"><input type="checkbox" name="defect" value="caida"><span>Caída</span></label>
               <label class="nc-check"><input type="checkbox" name="defect" value="salida"><span>Salida</span></label>
-              <label class="nc-check"><input type="checkbox" name="defect" value="otro"><span>Otro</span></label>
+              <label class="nc-check nc-check-otro">
+                <input type="checkbox" name="defect" value="otro"><span>Otro:</span>
+                <input id="nc-defect-other" type="text" disabled class="nc-defect-other">
+              </label>
             </div>
-            <input id="nc-defect-other" type="text" placeholder="Especifica el defecto (si aplica Otro)" disabled class="nc-defect-other">
           </div>
 
           <div class="nc-field">
-            <label for="nc-origin">Origen del Hallazgo</label>
+            <label for="nc-origin">Origen del Hallazgo: <span class="nc-required">*</span></label>
             <select id="nc-origin" name="origin">
               <option value="">Selecciona…</option>
               <option value="Paletizado FFT">Paletizado FFT</option>
               <option value="Producción">Producción</option>
-              <option value="Inspección de línea">Inspección de línea</option>
+              <option value="Etiquetado incorrecto">Etiquetado incorrecto</option>
               <option value="Clasificación FFT">Clasificación FFT</option>
+              <option value="Inspección de línea">Inspección de línea</option>
               <option value="Empaque FFT">Empaque FFT</option>
-              <option value="Almacén">Almacén</option>
               <option value="Calidad">Calidad</option>
+              <option value="Almacén">Almacén</option>
               <option value="Recibo">Recibo</option>
               <option value="Embarques">Embarques</option>
               <option value="Otro">Otro</option>
@@ -146,12 +118,12 @@
 
           <div class="nc-field-row">
             <div class="nc-field">
-              <label for="nc-inspector">Inspector</label>
+              <label for="nc-inspector">Inspector: <span class="nc-required">*</span></label>
               <input id="nc-inspector" name="inspector" type="text" placeholder="Nombre del inspector"
                      autocomplete="off" spellcheck="false">
             </div>
             <div class="nc-field">
-              <label for="nc-received-by">Firma de Recibido</label>
+              <label for="nc-received-by">Firma de Recibido: <span class="nc-required">*</span></label>
               <input id="nc-received-by" name="receivedBy" type="text" placeholder="Nombre de quien recibe"
                      autocomplete="off" spellcheck="false">
             </div>
@@ -160,41 +132,22 @@
           <p class="form-msg" id="nc-form-msg" role="status" aria-live="polite"></p>
 
           <div class="actions nc-form-actions">
-            <button type="button" id="nc-btn-clear" class="btn btn-ghost">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M3 21c1.5-2 3-3 6-3"></path>
-                <path d="M13.5 6.5 17 3l4 4-3.5 3.5"></path>
-                <path d="m10 10-7 7 3 3 7-7"></path>
-                <path d="m13.5 6.5 4 4"></path>
-              </svg>
-              <span>Limpiar</span>
-            </button>
-            <button type="submit" id="nc-btn-add" class="btn btn-primary">
+            <button type="submit" id="nc-btn-add" class="btn nc-btn-blue">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19"></line>
                 <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
-              <span>Agregar a bandeja</span>
+              <span>Agregar a la Cola de Impresión</span>
+            </button>
+            <button type="button" id="nc-btn-clear" class="btn btn-ghost">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="1 4 1 10 7 10"></polyline>
+                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+              </svg>
+              <span>Limpiar</span>
             </button>
           </div>
         </form>
-      </section>
-
-      <!-- ============================ COLUMNA 2 ============================ -->
-      <section class="nc-card no-print" id="nc-col-tray" aria-label="Bandeja de impresión">
-        <div class="nc-card-title-row">
-          <h2 class="nc-card-title">
-            <span class="nc-card-icon">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M6 9V2h12v7"></path>
-                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                <rect x="6" y="14" width="12" height="8"></rect>
-              </svg>
-            </span>
-            <span>2. Bandeja de impresión</span>
-          </h2>
-          <span class="nc-tray-counter" id="nc-tray-counter">0 / 6 etiquetas</span>
-        </div>
 
         <p class="nc-info-banner">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -202,23 +155,27 @@
             <line x1="12" y1="8" x2="12" y2="8.01"></line>
             <line x1="12" y1="11" x2="12" y2="16"></line>
           </svg>
-          <span>Agrega hasta 6 reportes para imprimirlos en una sola hoja.</span>
+          <span>Completa los datos y agrega el reporte a la cola de impresión. Se imprimirán 6 etiquetas por hoja.</span>
         </p>
+      </section>
+
+      <!-- ============================ COLUMNA 2 ============================ -->
+      <section class="nc-card no-print" id="nc-col-tray" aria-label="Cola de Impresión">
+        <h2 class="nc-card-title nc-card-title-plain">Cola de Impresión (<span id="nc-tray-count-inline">0</span>)</h2>
 
         <div class="nc-tray-list" id="nc-tray-list"></div>
-        <p class="nc-tray-empty" id="nc-tray-empty">Sin reportes en la bandeja. Agrega uno desde el formulario.</p>
-        <div class="nc-tray-more hidden" id="nc-tray-more">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          <span>
-            <strong>Agregar más reportes</strong>
-            <small>Selecciona y agrega hasta 6</small>
-          </span>
-        </div>
+        <p class="nc-tray-empty" id="nc-tray-empty">Sin reportes en la cola. Agrega uno desde el formulario.</p>
 
-        <p class="nc-tray-explain" id="nc-tray-explain"></p>
+        <div class="nc-tray-stats">
+          <div class="nc-tray-stat-row">
+            <span>Etiquetas en cola:</span>
+            <span class="nc-stat-pill" id="nc-stat-queued">0 de 6</span>
+          </div>
+          <div class="nc-tray-stat-row">
+            <span>Espacios disponibles en hoja:</span>
+            <span class="nc-stat-pill" id="nc-stat-available">6</span>
+          </div>
+        </div>
 
         <button type="button" id="nc-btn-print-sheet" class="btn nc-btn-print" disabled>
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -226,38 +183,25 @@
             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
             <rect x="6" y="14" width="12" height="8"></rect>
           </svg>
-          <span id="nc-btn-print-sheet-label">Imprimir hoja (0 etiquetas)</span>
+          <span id="nc-btn-print-sheet-label">Imprimir Hoja (0 etiquetas)</span>
         </button>
       </section>
 
       <!-- ============================ COLUMNA 3 ============================ -->
       <section class="nc-card nc-preview-card" id="nc-col-preview" aria-label="Vista previa de impresión">
-        <div class="nc-card-title-row">
-          <h2 class="nc-card-title no-print">
-            <span class="nc-card-icon">
-              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-            </span>
-            <span>3. Vista previa de impresión (Carta horizontal - 6 etiquetas por hoja)</span>
-          </h2>
-          <span class="nc-live-badge no-print"><i></i>Vista en vivo</span>
-        </div>
+        <h2 class="nc-card-title nc-card-title-plain no-print">Vista Previa de Impresión (Carta Horizontal)</h2>
 
         <div class="nc-sheet-wrap" id="nc-sheet-wrap">
           <div class="nc-sheet" id="nc-print-area"><!-- 6 slots inyectados por JS --></div>
         </div>
 
-        <p class="nc-info-banner nc-info-banner-shield no-print">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5Z"></path>
-            <polyline points="9 12 11 14 15 10"></polyline>
+        <p class="nc-info-banner no-print">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <line x1="12" y1="8" x2="12" y2="8.01"></line>
+            <line x1="12" y1="11" x2="12" y2="16"></line>
           </svg>
-          <span>
-            <strong>Las 6 etiquetas tienen el mismo tamaño, están alineadas y optimizadas para Carta horizontal.</strong><br>
-            Todos los datos se mantienen visibles y legibles al imprimir.
-          </span>
+          <span>Las 6 etiquetas son idénticas, alineadas y optimizadas para Carta horizontal (11 x 8.5 pulgadas).</span>
         </p>
       </section>
 
@@ -275,10 +219,10 @@
       <h2 id="nc-confirm-title">¿La impresión fue correcta?</h2>
     </div>
     <div class="modal-body">
-      <p>Si confirmas, los reportes seleccionados pasarán a "Impreso" y saldrán de la bandeja. Si la impresión falló o la cancelaste, permanecerán en la bandeja para reintentar.</p>
+      <p>Si confirmas, los reportes seleccionados pasarán a "Impreso" y saldrán de la cola. Si la impresión falló o la cancelaste, permanecerán en la cola para reintentar.</p>
       <div class="actions">
         <button type="button" id="nc-btn-print-failed" class="btn btn-ghost">No, falló / cancelé</button>
-        <button type="button" id="nc-btn-print-ok" class="btn btn-primary">Sí, se imprimió bien</button>
+        <button type="button" id="nc-btn-print-ok" class="btn nc-btn-blue">Sí, se imprimió bien</button>
       </div>
     </div>
   </div>
