@@ -214,10 +214,24 @@ body.preview-mode .rp-print-area {
     padding: 0 !important;
   }
 
-  body * { visibility: hidden; }
-
-  #rp-preview-wrap-front, #rp-preview-wrap-front *,
-  #rp-preview-wrap-back, #rp-preview-wrap-back * {
+  /* styles.css (cargado antes, ver <head>) también define "body * {
+     visibility: hidden; }" de forma global — pensado para la etiqueta FFT,
+     pero alcanza esta página igual. Antes esto se contrarrestaba con
+     "visibility: visible !important" SÓLO en las 2 hojas (#rp-preview-wrap-*
+     y sus descendientes), dejando sus ancestros (.main-content,
+     .rp-sheet-section, .rp-preview-panel, body) todavía en
+     visibility:hidden — combinado con el salto de página forzado que
+     necesita esta hoja (2 páginas), eso confundía la paginación real de
+     impresión de Chrome, que sólo sacaba la página 1. Aquí se restaura
+     visibility:visible en TODA la cadena de ancestros, no sólo en las
+     hojas, para que ningún nodo de por medio quede oculto. */
+  body,
+  .main-content,
+  .rp-sheet-section,
+  .rp-preview-panel,
+  .rp-preview-wrap,
+  .rp-print-page,
+  .rp-print-page * {
     visibility: visible !important;
   }
 
