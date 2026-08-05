@@ -362,8 +362,12 @@
     });
     trayList.appendChild(frag);
 
-    btnPrintSheet.disabled = count === 0;
-    btnPrintSheetLabel.textContent = `Imprimir Hoja (${count} etiqueta${count === 1 ? '' : 's'})`;
+    // Siempre imprimible, aun con la cola vacía: las posiciones sin
+    // reporte se llenan con la plantilla en blanco (ver renderTrayPreview).
+    btnPrintSheet.disabled = false;
+    btnPrintSheetLabel.textContent = count === 0
+      ? 'Imprimir Hoja (6 en blanco)'
+      : `Imprimir Hoja (${count} etiqueta${count === 1 ? '' : 's'})`;
   }
 
   // El clic sólo ABRE el modal propio de confirmación (nunca confirm()
@@ -542,8 +546,10 @@
   }
 
   btnPrintSheet.addEventListener('click', async () => {
-    if (!trayReports.length) return;
-    pendingPrintIds = trayReports.map((r) => r.id);
+    // Con la cola vacía se imprime igual (las 6 tarjetas en blanco de
+    // renderTrayPreview) — pendingPrintIds queda null porque no hay ningún
+    // reporte real que marcar como "impreso" después.
+    pendingPrintIds = trayReports.length ? trayReports.map((r) => r.id) : null;
     pendingReprintReport = null;
     await waitForPrintReady();
     window.print();
