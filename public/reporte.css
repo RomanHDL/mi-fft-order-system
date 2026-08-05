@@ -179,14 +179,40 @@ body.preview-mode .rp-print-area {
 }
 
 @media print {
+  /* "height: auto" y "overflow: visible" aquí son OBLIGATORIOS: styles.css
+     (cargado antes que este archivo, ver <head> de reporte-paletizado.html)
+     define su propio bloque @media print con "html, body { height: 8.5in;
+     overflow: hidden !important; }" pensado para la etiqueta FFT horizontal
+     de una sola página (index.html). Esa regla es global (selector "html,
+     body" sin id), así que también alcanza a esta página; si no se pisan
+     aquí "height" y "overflow" explícitamente, el body queda con una altura
+     fija de 8.5in y overflow oculto, Chrome sólo ve espacio para 1 página y
+     recorta/nunca genera la página 2 (la cara trasera queda en blanco).
+     Todo lo demás (width, margin, padding, background) ya se sobreescribía
+     bien porque este bloque es más específico en orden de cascada — sólo
+     faltaban estas dos propiedades. */
   html, body {
     width: 8.5in;
+    height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
+    overflow: visible !important;
     background: #ffffff !important;
   }
 
   .no-print { display: none !important; }
+
+  /* Antes las 2 hojas usaban "position: fixed" (ignora todo layout de sus
+     ancestros). Ahora viven en flujo normal para que el salto de página
+     funcione, así que el padding/max-width de .main-content SÍ se sumaría
+     al alto y ancho reales — sin esto, ese padding extra (≈0.5in) empuja el
+     contenido a necesitar una 3ª hoja en blanco y desalinea el ancho de
+     8.5in de cada página respecto al borde físico de la hoja. */
+  .main-content {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 
   body * { visibility: hidden; }
 
