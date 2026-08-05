@@ -14,14 +14,37 @@
 
 .rp-sheet-section {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  align-items: flex-start;
+  gap: 28px;
+}
+
+.rp-preview-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(360px, 46vw);
+}
+
+.rp-panel-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  text-align: center;
 }
 
 .rp-preview-wrap {
   container-type: inline-size;
-  width: min(420px, 100%);
+  width: 100%;
   aspect-ratio: 8.5 / 11;
   margin: 0 auto;
+}
+
+@media (max-width: 720px) {
+  .rp-preview-panel { width: 100%; max-width: 420px; }
 }
 
 /* Modo "Vista previa" (misma mecánica que la etiqueta FFT en styles.css:
@@ -34,11 +57,15 @@ body.preview-mode .rp-sheet-section {
   background: #58595c;
   overflow: auto;
   padding: 70px 16px 40px;
+  align-items: flex-start;
 }
 
-body.preview-mode .rp-preview-wrap {
-  width: min(620px, 92vw);
-  margin: auto;
+body.preview-mode .rp-preview-panel {
+  width: min(420px, 42vw);
+}
+
+@media (max-width: 900px) {
+  body.preview-mode .rp-preview-panel { width: min(420px, 88vw); }
 }
 
 body.preview-mode .rp-print-area {
@@ -101,31 +128,45 @@ body.preview-mode .rp-print-area {
   margin-left: 0.8em;
 }
 
-/* Columnas TRG / Almacén: ocupan el resto de la hoja, separadas por una
-   línea vertical — espacio en blanco para llenar a mano durante el turno. */
+/* Columnas TRG / Almacén / FBA: ocupan el resto de la hoja. Cada columna es
+   un .rp-col-group con su título subrayado (línea horizontal) y una línea
+   vertical (border-left) que la separa de la anterior y baja hasta el fondo
+   de la hoja porque el grupo es flex y ocupa toda la altura disponible.
+   border, NO background: un color de fondo depende de que el usuario tenga
+   activado "Gráficos de fondo" en el diálogo de impresión (desactivado por
+   default en Chrome) y por eso no salía al imprimir; un border SIEMPRE se
+   imprime sin importar esa opción. */
 .rp-columns {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: repeat(3, 1fr);
   margin-top: 3cqw;
 }
 
-.rp-col {
-  text-align: center;
-  font-weight: 400;
-  font-size: 3.2cqw;
-  padding-top: 1cqw;
-  color: var(--gray-900);
+.rp-col-group {
+  display: flex;
+  flex-direction: column;
+  border-left: 1.3px solid var(--black);
 }
 
-/* border, NO background: un color de fondo depende de que el usuario tenga
-   activado "Gráficos de fondo" en el diálogo de impresión (desactivado por
-   default en Chrome) y por eso no salía al imprimir; un border SIEMPRE se
-   imprime sin importar esa opción. */
-.rp-col-divider {
-  width: 0;
-  border-left: 1.3px solid var(--black);
+.rp-col-group:first-child {
+  border-left: none;
+}
+
+.rp-col-title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 3.2cqw;
+  padding: 0 0 0.8cqw;
+  border-bottom: 1.3px solid var(--black);
+  color: var(--black);
+}
+
+/* Cara trasera: mismas columnas, pero sin tabla de encabezado arriba —
+   un poco de aire antes de los títulos para que no queden pegados al borde. */
+.rp-columns-back {
+  margin-top: 0;
 }
 
 /* ==========================================================================
@@ -140,10 +181,8 @@ body.preview-mode .rp-print-area {
 @media print {
   html, body {
     width: 8.5in;
-    height: 11in;
     margin: 0 !important;
     padding: 0 !important;
-    overflow: hidden !important;
     background: #ffffff !important;
   }
 
@@ -151,17 +190,26 @@ body.preview-mode .rp-print-area {
 
   body * { visibility: hidden; }
 
-  #rp-preview-wrap,
-  #rp-preview-wrap *,
-  #rp-print-area,
-  #rp-print-area * {
+  #rp-preview-wrap-front, #rp-preview-wrap-front *,
+  #rp-preview-wrap-back, #rp-preview-wrap-back * {
     visibility: visible !important;
   }
 
-  #rp-preview-wrap {
+  /* En pantalla, .rp-sheet-section pone los dos paneles lado a lado (flex).
+     Para imprimir necesitamos que caigan uno DEBAJO del otro en el flujo
+     normal del documento — cada uno ocupando su propia hoja física — y que
+     el salto de página (abajo) sea lo único que los separe en 2 páginas. */
+  .rp-sheet-section, .rp-preview-panel {
+    display: block !important;
+    width: auto;
+  }
+
+  /* Cada .rp-preview-wrap pasa de "contenedor con aspect-ratio para la
+     vista en pantalla" a un bloque de tamaño físico exacto (8.5in x 11in)
+     en flujo normal, para que el salto de página los reparta en 2 hojas. */
+  #rp-preview-wrap-front, #rp-preview-wrap-back {
     container-type: normal;
-    position: fixed;
-    inset: 0;
+    position: static;
     width: 8.5in;
     height: 11in;
     aspect-ratio: auto;
@@ -170,9 +218,14 @@ body.preview-mode .rp-print-area {
     overflow: hidden;
   }
 
-  #rp-print-area {
-    position: fixed;
-    inset: 0;
+  /* Página 1 = frontal, salto de página, página 2 = trasera — así una
+     impresora configurada a doble cara las saca en una sola hoja física. */
+  #rp-preview-wrap-front {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .rp-print-page {
     width: 8.5in;
     height: 11in;
     margin: 0;
@@ -180,11 +233,7 @@ body.preview-mode .rp-print-area {
     border: none;
     overflow: hidden;
     box-sizing: border-box;
-    page-break-before: avoid;
-    page-break-after: avoid;
     page-break-inside: avoid;
-    break-before: avoid-page;
-    break-after: avoid-page;
     break-inside: avoid-page;
   }
 
@@ -198,7 +247,7 @@ body.preview-mode .rp-print-area {
   .rp-header-table th, .rp-header-table td { padding: 2.5pt 11pt; }
   .rp-value-inline { margin-left: 10pt; }
   .rp-columns { margin-top: 0.26in; }
-  .rp-col { font-size: 19.6pt; padding-top: 6pt; }
+  .rp-col-title { font-size: 19.6pt; padding: 0 0 5pt; }
 
   /* Respaldo: aunque la línea divisoria ya usa border (siempre se imprime),
      esto evita que cualquier otro color de fondo se pierda si el usuario

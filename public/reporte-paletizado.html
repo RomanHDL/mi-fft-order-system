@@ -70,40 +70,62 @@
       <p class="hint">La fecha se llena sola con el día de hoy cada vez que abres esta página; puedes cambiarla si necesitas imprimir para otro día.</p>
     </section>
 
-    <!-- =================== VISTA PREVIA DE LA HOJA =================== -->
+    <!-- =============== VISTA PREVIA: CARA FRONTAL Y TRASERA =============== -->
     <section class="rp-sheet-section" aria-label="Vista previa del reporte">
-      <div class="rp-preview-wrap" id="rp-preview-wrap">
-        <div class="rp-print-area" id="rp-print-area">
 
-          <table class="rp-header-table">
-            <tr><th colspan="2">Reporte de producción de paletizado</th></tr>
-            <tr>
-              <td class="rp-label-cell">Turno</td>
-              <td class="rp-value-cell" id="rp-turno-display">&nbsp;</td>
-            </tr>
-            <tr>
-              <td class="rp-label-cell">Fecha:</td>
-              <td class="rp-value-cell" id="rp-fecha-display">&nbsp;</td>
-            </tr>
-            <tr>
-              <td class="rp-responsable-cell" colspan="2">
-                <span class="rp-label-inline">Responsable</span>
-                <span class="rp-value-inline" id="rp-responsable-display">&nbsp;</span>
-              </td>
-            </tr>
-          </table>
+      <!-- ---- CARA FRONTAL (página de impresión 1) ---- -->
+      <div class="rp-preview-panel">
+        <h2 class="rp-panel-title no-print">Cara frontal</h2>
+        <div class="rp-preview-wrap" id="rp-preview-wrap-front">
+          <div class="rp-print-area rp-print-page" id="rp-page-front">
 
-          <div class="rp-columns">
-            <div class="rp-col rp-col-trg">TRG</div>
-            <div class="rp-col-divider"></div>
-            <div class="rp-col rp-col-almacen">Almacén</div>
+            <table class="rp-header-table">
+              <tr><th colspan="2">Reporte de producción de paletizado</th></tr>
+              <tr>
+                <td class="rp-label-cell">Turno</td>
+                <td class="rp-value-cell" id="rp-turno-display">&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="rp-label-cell">Fecha:</td>
+                <td class="rp-value-cell" id="rp-fecha-display">&nbsp;</td>
+              </tr>
+              <tr>
+                <td class="rp-responsable-cell" colspan="2">
+                  <span class="rp-label-inline">Responsable</span>
+                  <span class="rp-value-inline" id="rp-responsable-display">&nbsp;</span>
+                </td>
+              </tr>
+            </table>
+
+            <div class="rp-columns">
+              <div class="rp-col-group"><div class="rp-col-title">TRG</div></div>
+              <div class="rp-col-group"><div class="rp-col-title">Almacén</div></div>
+              <div class="rp-col-group"><div class="rp-col-title">FBA</div></div>
+            </div>
+
           </div>
-
         </div>
       </div>
+
+      <!-- ---- CARA TRASERA (página de impresión 2 — sin encabezado de datos) ---- -->
+      <div class="rp-preview-panel">
+        <h2 class="rp-panel-title no-print">Cara trasera</h2>
+        <div class="rp-preview-wrap" id="rp-preview-wrap-back">
+          <div class="rp-print-area rp-print-page rp-print-page-back" id="rp-page-back">
+
+            <div class="rp-columns rp-columns-back">
+              <div class="rp-col-group"><div class="rp-col-title">TRG</div></div>
+              <div class="rp-col-group"><div class="rp-col-title">Almacén</div></div>
+              <div class="rp-col-group"><div class="rp-col-title">FBA</div></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </section>
 
-    <p class="print-info no-print">Al imprimir se genera una sola hoja Carta VERTICAL con este formato.</p>
+    <p class="print-info no-print">Al imprimir se generará un solo documento tamaño Carta VERTICAL a doble cara.</p>
   </main>
 
   <footer class="no-print app-footer">
