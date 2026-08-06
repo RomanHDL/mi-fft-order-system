@@ -128,19 +128,19 @@ body.preview-mode .rp-print-area {
   margin-left: 0.8em;
 }
 
-/* Columnas TRG / Almacén / FBA: ocupan el resto de la hoja. Cada columna es
-   un .rp-col-group con su título subrayado (línea horizontal) y una línea
-   vertical (border-left) que la separa de la anterior y baja hasta el fondo
-   de la hoja porque el grupo es flex y ocupa toda la altura disponible.
-   border, NO background: un color de fondo depende de que el usuario tenga
-   activado "Gráficos de fondo" en el diálogo de impresión (desactivado por
-   default en Chrome) y por eso no salía al imprimir; un border SIEMPRE se
-   imprime sin importar esa opción. */
+/* Columnas TRG / Almacén / Bulky / FBA: ocupan el resto de la hoja. Cada
+   columna es un .rp-col-group con su título subrayado (línea horizontal) y
+   una línea vertical (border-left) que la separa de la anterior y baja
+   hasta el fondo de la hoja porque el grupo es flex y ocupa toda la altura
+   disponible. border, NO background: un color de fondo depende de que el
+   usuario tenga activado "Gráficos de fondo" en el diálogo de impresión
+   (desactivado por default en Chrome) y por eso no salía al imprimir; un
+   border SIEMPRE se imprime sin importar esa opción. */
 .rp-columns {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   margin-top: 3cqw;
 }
 
@@ -287,6 +287,13 @@ body.preview-mode .rp-print-area {
   .rp-header-table th, .rp-header-table td { padding: 2.5pt 11pt; }
   .rp-value-inline { margin-left: 10pt; }
   .rp-columns { margin-top: 0.26in; }
+  /* La cara trasera NO tiene tabla de encabezado arriba — sin este ajuste,
+     heredaba el mismo margin-top que la frontal (misma clase ".rp-columns")
+     y los títulos/líneas empezaban más abajo de lo necesario, reservando
+     espacio que aquí no hace falta. Selector con la MISMA especificidad que
+     ".rp-columns" arriba, pero declarado después → gana y deja el margen
+     mínimo, con los títulos casi al borde superior de la zona imprimible. */
+  .rp-columns-back { margin-top: 0.05in; }
   .rp-col-title { font-size: 19.6pt; padding: 0 0 5pt; }
 
   /* Respaldo: aunque la línea divisoria ya usa border (siempre se imprime),

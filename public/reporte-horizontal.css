@@ -124,7 +124,7 @@
 }
 
 /* Encabezado compacto de la cara frontal: título + Turno/Fecha/Responsable
-   en una sola franja, para dejar el máximo alto posible a TRG/Almacén. */
+   en una sola franja, para dejar el máximo alto posible a las columnas. */
 .rph-front-header { flex: none; margin-bottom: 1.6cqw; }
 .rph-front-title {
   font-weight: 700;
@@ -151,9 +151,8 @@
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
+  grid-template-columns: repeat(4, 1fr);
 }
-.rph-columns-2 { grid-template-columns: repeat(2, 1fr); }
-.rph-columns-3 { grid-template-columns: repeat(3, 1fr); }
 
 .rph-col-group {
   display: flex;
