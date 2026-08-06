@@ -1,0 +1,256 @@
+/* ==========================================================================
+   Reporte de Producción de Paletizado — MODO HORIZONTAL (Carta 11in x 8.5in).
+
+   Archivo 100% aislado del modo vertical (reporte.css): ningún selector de
+   aquí toca clases/ids "rp-*" (prefijo del vertical) — todo aquí usa el
+   prefijo "rph-" (Reporte Paletizado Horizontal).
+
+   IMPORTANTE: este archivo NO define ningún "@page" — si lo hiciera, al
+   estar cargado después de reporte.css, su @page ganaría SIEMPRE la
+   cascada (incluso al imprimir el modo vertical) y rompería el @page
+   portrait del vertical. El @page "letter landscape" se inyecta como una
+   hoja de estilos <style> temporal sólo durante la impresión horizontal
+   (ver doPrintHorizontal() en reporte.js) y se retira justo después de
+   imprimir — así nunca coexiste con el @page portrait del vertical.
+
+   Por la misma razón, todo el contenido horizontal queda OCULTO por
+   defecto en cualquier impresión (ver el candado al final de este
+   archivo) — sólo la hoja de estilos temporal lo revela, y sólo durante
+   esa impresión puntual.
+   ========================================================================== */
+
+/* ---- Selector "MODO DE IMPRESIÓN" (Vertical/Horizontal) junto a Turno/Fecha/Responsable ---- */
+.rph-mode-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rph-mode-toggle-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-700);
+}
+.rph-mode-toggle-buttons {
+  display: flex;
+  gap: 6px;
+}
+.rph-mode-btn {
+  padding: 8px 14px;
+  border: 1.5px solid var(--gray-500);
+  border-radius: 4px;
+  background: var(--white);
+  color: var(--black);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+}
+.rph-mode-btn:hover { background: var(--gray-100); }
+.rph-mode-btn.active {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: var(--white);
+}
+
+/* ---- Indicador "MODO VERTICAL" / "MODO HORIZONTAL" (sólo visual, no imprime) ---- */
+.rph-mode-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 22px auto 10px;
+  max-width: 1100px;
+  padding: 0 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--gray-700);
+}
+.rph-mode-icon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex: none;
+  color: var(--gray-500);
+}
+.rph-mode-icon svg { width: 100%; height: 100%; }
+
+/* ---- Vista en pantalla: dos paneles lado a lado (mismo patrón que el
+   vertical, replicado con prefijo "rph-" para no compartir CSS) ---- */
+.rph-sheet-section {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 28px;
+  margin-bottom: 8px;
+}
+.rph-preview-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: min(460px, 46vw);
+}
+.rph-panel-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gray-900);
+  text-align: center;
+}
+.rph-preview-wrap {
+  container-type: inline-size;
+  width: 100%;
+  aspect-ratio: 11 / 8.5;
+  margin: 0 auto;
+}
+@media (max-width: 720px) {
+  .rph-preview-panel { width: 100%; max-width: 560px; }
+}
+
+.rph-print-page {
+  width: 100%;
+  height: 100%;
+  background: var(--white);
+  border: 1px solid var(--gray-300);
+  padding: 3.2cqw;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font);
+  color: var(--black);
+  overflow: hidden;
+}
+
+/* Encabezado compacto de la cara frontal: título + Turno/Fecha/Responsable
+   en una sola franja, para dejar el máximo alto posible a TRG/Almacén. */
+.rph-front-header { flex: none; margin-bottom: 1.6cqw; }
+.rph-front-title {
+  font-weight: 700;
+  font-size: 2.1cqw;
+  text-align: center;
+  margin-bottom: 0.7cqw;
+}
+.rph-front-data {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2.4cqw;
+  font-size: 1.4cqw;
+  color: var(--gray-900);
+  border-top: 1px solid var(--gray-300);
+  padding-top: 0.7cqw;
+}
+.rph-front-data b { font-weight: 600; }
+
+/* Columnas: sin recuadros ni espacios punteados — sólo la línea horizontal
+   bajo los títulos y las líneas verticales que separan las áreas, dejando
+   el resto totalmente libre para pegar etiquetas donde se necesite. */
+.rph-columns {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+}
+.rph-columns-2 { grid-template-columns: repeat(2, 1fr); }
+.rph-columns-3 { grid-template-columns: repeat(3, 1fr); }
+
+.rph-col-group {
+  display: flex;
+  flex-direction: column;
+  border-left: 1.3px solid var(--black);
+}
+.rph-col-group:first-child { border-left: none; }
+
+.rph-col-title {
+  text-align: center;
+  font-weight: 700;
+  font-size: 2.2cqw;
+  padding: 0 0 0.7cqw;
+  border-bottom: 1.3px solid var(--black);
+  color: var(--black);
+}
+
+/* ---- Candado de seguridad ----
+   Oculto en CUALQUIER impresión por defecto. Sólo la hoja de estilos
+   temporal inyectada por doPrintHorizontal() (reporte.js) lo revela, y
+   sólo durante esa impresión puntual — así el modo horizontal nunca
+   aparece por accidente en una impresión del modo vertical. */
+@media print {
+  .rph-sheet-section, .rph-mode-label, .rph-mode-toggle { display: none !important; }
+}
+
+/* ---- Nota de doble cara (reemplaza el antiguo aviso de una sola hoja;
+   clase propia, no reutiliza ".print-info" para no acoplarse con el
+   aviso de index.html, que comparte esa clase) ---- */
+.rph-duplex-note {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 24px;
+  margin: 18px auto 0;
+  max-width: 1100px;
+  padding: 12px 16px;
+  background: var(--brand-blue-tint);
+  border: 1px solid #cfe3f0;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  color: var(--gray-700);
+}
+.rph-duplex-note > div { flex: 1 1 280px; }
+.rph-duplex-note strong { color: var(--gray-900); }
+
+/* ---- Modal "Elegir orientación de impresión" (reutiliza .modal/.modal-backdrop/.modal-header/.modal-body/.btn de styles.css) ---- */
+.rph-orientation-modal { width: min(480px, 92vw); }
+
+.rph-orientation-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.rph-orientation-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  text-align: left;
+  border: 1.5px solid var(--gray-300);
+  border-radius: 6px;
+  padding: 12px 14px;
+  background: var(--white);
+  cursor: pointer;
+  width: 100%;
+  font-family: var(--font);
+}
+.rph-orientation-card:hover { background: var(--gray-100); }
+.rph-orientation-card.selected {
+  border-color: var(--brand-blue);
+  background: var(--brand-blue-tint);
+}
+.rph-orientation-icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500);
+}
+.rph-orientation-card.selected .rph-orientation-icon { color: var(--brand-blue); }
+.rph-orientation-icon svg { width: 100%; height: 100%; }
+.rph-orientation-text { flex: 1 1 auto; }
+.rph-orientation-text strong { display: block; font-size: 0.92rem; margin-bottom: 3px; color: var(--black); }
+.rph-orientation-text small { font-size: 0.78rem; color: var(--gray-700); line-height: 1.4; }
+.rph-orientation-check {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--gray-300);
+  margin-top: 2px;
+  box-sizing: border-box;
+}
+.rph-orientation-card.selected .rph-orientation-check {
+  border-color: var(--brand-blue);
+  background: var(--brand-blue);
+  box-shadow: inset 0 0 0 3px var(--white);
+}

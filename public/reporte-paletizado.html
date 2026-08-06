@@ -6,6 +6,7 @@
 <title>Reporte de Producción de Paletizado · Mi Technologies</title>
 <link rel="stylesheet" href="/styles.css">
 <link rel="stylesheet" href="/reporte.css?v=3">
+<link rel="stylesheet" href="/reporte-horizontal.css?v=1">
 </head>
 <body>
 
@@ -41,6 +42,14 @@
     <!-- ======================== BARRA DE CAPTURA ======================== -->
     <section class="capture-bar no-print" aria-label="Datos del reporte">
       <form id="report-form" novalidate class="capture-form">
+        <div class="rph-mode-toggle">
+          <span class="rph-mode-toggle-label">Modo de impresión</span>
+          <div class="rph-mode-toggle-buttons">
+            <button type="button" id="rph-mode-btn-vertical" class="rph-mode-btn active" data-orientation="vertical">Vertical</button>
+            <button type="button" id="rph-mode-btn-horizontal" class="rph-mode-btn" data-orientation="horizontal">Horizontal</button>
+          </div>
+        </div>
+
         <div class="field field-turno">
           <label for="rp-turno">Turno</label>
           <input id="rp-turno" name="turno" type="text"
@@ -69,6 +78,14 @@
 
       <p class="hint">La fecha se llena sola con el día de hoy cada vez que abres esta página; puedes cambiarla si necesitas imprimir para otro día.</p>
     </section>
+
+    <!-- Indicador visual únicamente — no forma parte del diseño vertical ni se imprime. -->
+    <div class="rph-mode-label no-print">
+      <span class="rph-mode-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="1.5"></rect></svg>
+      </span>
+      <span>MODO VERTICAL</span>
+    </div>
 
     <!-- =============== VISTA PREVIA: CARA FRONTAL Y TRASERA =============== -->
     <section class="rp-sheet-section" aria-label="Vista previa del reporte">
@@ -125,7 +142,68 @@
 
     </section>
 
-    <p class="print-info no-print">Al imprimir se generará un solo documento tamaño Carta VERTICAL a doble cara.</p>
+    <!-- Indicador visual únicamente — no forma parte del diseño horizontal ni se imprime. -->
+    <div class="rph-mode-label no-print">
+      <span class="rph-mode-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="1.5"></rect></svg>
+      </span>
+      <span>MODO HORIZONTAL</span>
+    </div>
+
+    <!-- ============ VISTA PREVIA HORIZONTAL: CARA FRONTAL Y TRASERA ============
+         Aislada por completo del modo vertical: prefijo "rph-" en todo,
+         estilos propios en reporte-horizontal.css, oculta por defecto en
+         cualquier impresión (ver ese archivo) — sólo se revela mediante la
+         hoja de estilos temporal que inyecta doPrintHorizontal() en
+         reporte.js cuando el usuario elige "Horizontal" en el modal. -->
+    <section class="rph-sheet-section" aria-label="Vista previa horizontal del reporte">
+
+      <!-- ---- CARA FRONTAL HORIZONTAL (página de impresión 1) ---- -->
+      <div class="rph-preview-panel">
+        <h2 class="rph-panel-title no-print">Cara frontal (Horizontal)</h2>
+        <div class="rph-preview-wrap" id="rph-preview-wrap-front">
+          <div class="rph-print-page rph-page-front" id="rph-page-front">
+
+            <div class="rph-front-header">
+              <div class="rph-front-title">Reporte de producción de paletizado</div>
+              <div class="rph-front-data">
+                <span>Turno: <b id="rph-turno-display">&nbsp;</b></span>
+                <span>Fecha: <b id="rph-fecha-display">&nbsp;</b></span>
+                <span>Responsable: <b id="rph-responsable-display">&nbsp;</b></span>
+              </div>
+            </div>
+
+            <div class="rph-columns rph-columns-2">
+              <div class="rph-col-group"><div class="rph-col-title">TRG</div></div>
+              <div class="rph-col-group"><div class="rph-col-title">Almacén</div></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- CARA TRASERA HORIZONTAL (página de impresión 2 — sin encabezado de datos) ---- -->
+      <div class="rph-preview-panel">
+        <h2 class="rph-panel-title no-print">Cara trasera (Horizontal)</h2>
+        <div class="rph-preview-wrap" id="rph-preview-wrap-back">
+          <div class="rph-print-page rph-page-back" id="rph-page-back">
+
+            <div class="rph-columns rph-columns-3">
+              <div class="rph-col-group"><div class="rph-col-title">FBA</div></div>
+              <div class="rph-col-group"><div class="rph-col-title">Bulky</div></div>
+              <div class="rph-col-group"><div class="rph-col-title">Fierro</div></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <div class="rph-duplex-note no-print">
+      <div><strong>Vertical:</strong> activa "Imprimir en ambas caras" y selecciona "Voltear por el borde largo".</div>
+      <div><strong>Horizontal:</strong> activa "Imprimir en ambas caras". Para mantener ambas caras en la misma orientación, normalmente selecciona "Voltear por el borde corto"; la opción exacta puede variar según la impresora.</div>
+    </div>
   </main>
 
   <footer class="no-print app-footer">
@@ -136,6 +214,46 @@
   <div class="preview-toolbar no-print" id="rp-preview-toolbar">
     <button type="button" id="rp-btn-preview-print" class="btn btn-primary">Imprimir</button>
     <button type="button" id="rp-btn-preview-close" class="btn btn-ghost">Cerrar vista previa</button>
+  </div>
+
+  <!-- ==================== MODAL: Elegir orientación de impresión ====================
+       Decide ÚNICAMENTE cuál función ejecutar (doPrint vertical, ya existente
+       y sin cambios, o doPrintHorizontal nueva) — no imprime nada por sí mismo. -->
+  <div class="modal-backdrop no-print hidden" id="rph-orientation-backdrop"></div>
+  <div class="modal rph-orientation-modal no-print hidden" id="rph-orientation-modal" role="dialog" aria-modal="true" aria-labelledby="rph-orientation-title">
+    <div class="modal-header">
+      <h2 id="rph-orientation-title">Elegir orientación de impresión</h2>
+      <button type="button" class="modal-close" id="rph-orientation-close" aria-label="Cerrar">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Selecciona la orientación que deseas imprimir:</p>
+      <div class="rph-orientation-options">
+        <button type="button" class="rph-orientation-card" id="rph-option-vertical" data-orientation="vertical">
+          <span class="rph-orientation-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="1.5"></rect></svg>
+          </span>
+          <span class="rph-orientation-text">
+            <strong>Vertical (Carta Vertical)</strong>
+            <small>Frontal: Turno/Fecha/Responsable + TRG, Almacén, FBA.<br>Trasera: TRG, Almacén, FBA. Impresión a doble cara.</small>
+          </span>
+          <span class="rph-orientation-check" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="rph-orientation-card" id="rph-option-horizontal" data-orientation="horizontal">
+          <span class="rph-orientation-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="1.5"></rect></svg>
+          </span>
+          <span class="rph-orientation-text">
+            <strong>Horizontal (Carta Horizontal)</strong>
+            <small>Frontal: TRG, Almacén.<br>Trasera: FBA, Bulky, Fierro. Impresión a doble cara.</small>
+          </span>
+          <span class="rph-orientation-check" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="actions">
+        <button type="button" id="rph-orientation-cancel" class="btn btn-ghost">Cancelar</button>
+        <button type="button" id="rph-orientation-continue" class="btn btn-primary" disabled>Continuar</button>
+      </div>
+    </div>
   </div>
 
   <script src="/reporte.js"></script>
