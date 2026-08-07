@@ -451,4 +451,96 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, status: 'ok', dbConfigured: Boolean(DATABASE_URL) });
 });
 
+// ==========================================================================
+// Integraciones server-a-server (solo lectura) — preparado 2026-08-06 para
+// que otros proyectos (ej. mitechnologies-rt) puedan consumir estos datos
+// reales sin necesitar sesión de usuario. NO reemplaza ni modifica los
+// endpoints públicos de arriba (/api/labels, /api/nc-reports), que siguen
+// abiertos tal cual para el propio frontend de este proyecto — estos son
+// endpoints NUEVOS y ADITIVOS, mismo dato, gateados con una llave.
+//
+// Header requerido: x-integration-key == process.env.FFT_INTEGRATIONS_KEY
+// Si esa variable no está configurada, estos endpoints quedan deshabilitados
+// (503) en vez de abiertos por accidente.
+function requireIntegrationKey(req, res) {
+  const expected = process.env.FFT_INTEGRATIONS_KEY;
+  if (!expected) {
+    res.status(503).json({ success: false, error: 'FFT_INTEGRATIONS_KEY no configurada en este ambiente.' });
+    return false;
+  }
+  const provided = req.get('x-integration-key') || '';
+  if (!provided || provided.length !== expected.length || !timingSafeEqualStr(provided, expected)) {
+    res.status(401).json({ success: false, error: 'Llave de integración inválida.' });
+    return false;
+  }
+  return true;
+}
+
+function timingSafeEqualStr(a, b) {
+  const { timingSafeEqual } = require('crypto');
+  try {
+    return timingSafeEqual(Buffer.from(a), Buffer.from(b));
+  } catch {
+    return false;
+  }
+}
+
+// GET /api/integrations/labels?search= — mismo dato que GET /api/labels.
+app.get('/api/integrations/labels', async (req, res) => {
+  if (!requireIntegrationKey(req, res)) return;
+  try {
+    await ensureSchema();
+    const search = (req.query.search || '').toString().trim();
+    const rows = search
+      ? await sql`
+          SELECT id, order_number, label_date, created_at, created_by, printed_at, event_type
+          FROM labels
+          WHERE order_number ILIKE ${'%' + search + '%'}
+          ORDER BY COALESCE(printed_at, created_at) DESC
+          LIMIT 500
+        `
+      : await sql`
+          SELECT id, order_number, label_date, created_at, created_by, printed_at, event_type
+          FROM labels
+          ORDER BY COALESCE(printed_at, created_at) DESC
+          LIMIT 500
+        `;
+    res.json({ success: true, labels: rows });
+  } catch (err) {
+    console.error('[GET /api/integrations/labels]', err);
+    res.status(500).json({ success: false, error: 'Error al consultar el historial.' });
+  }
+});
+
+// GET /api/integrations/nc-reports?status=&search=&date=&defect= — mismo
+// dato que GET /api/nc-reports.
+app.get('/api/integrations/nc-reports', async (req, res) => {
+  if (!requireIntegrationKey(req, res)) return;
+  try {
+    await ensureSchema();
+    const status = cleanText(req.query.status) || 'all';
+    const search = cleanText(req.query.search);
+    const date = cleanText(req.query.date);
+    const defect = cleanText(req.query.defect).toLowerCase();
+
+    const rows = await sql`
+      SELECT id, report_number, report_date, lpn, sku, defects, defect_other,
+             origin, inspector, received_by, status, created_at, created_by,
+             printed_at, reprint_count
+      FROM nc_reports
+      WHERE (${status} = 'all' OR status = ${status})
+        AND (${search} = '' OR report_number ILIKE ${'%' + search + '%'}
+             OR lpn ILIKE ${'%' + search + '%'} OR sku ILIKE ${'%' + search + '%'})
+        AND (${date} = '' OR report_date = ${date})
+        AND (${defect} = '' OR ${defect} = ANY(defects))
+      ORDER BY COALESCE(printed_at, created_at) DESC
+      LIMIT 500
+    `;
+    res.json({ success: true, reports: rows });
+  } catch (err) {
+    console.error('[GET /api/integrations/nc-reports]', err);
+    res.status(500).json({ success: false, error: 'Error al consultar los reportes de No Conforme.' });
+  }
+});
+
 module.exports = app;
