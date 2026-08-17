@@ -2,8 +2,8 @@
    Reporte de Producción de Paletizado — lógica de esta hoja.
    Página independiente de la etiqueta FFT (index.html/app.js): no comparte
    historial ni base de datos, es sólo una hoja imprimible con Turno/Fecha/
-   Responsable + las columnas TRG / Almacén / Bulky / FBA en blanco para
-   llenar a mano.
+   Responsable + columnas en blanco para llenar a mano (frente: TRG /
+   Almacén — atrás: FBA / Bulky / Fierro).
    ========================================================================== */
 
 (function () {

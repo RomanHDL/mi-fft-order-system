@@ -128,8 +128,9 @@ body.preview-mode .rp-print-area {
   margin-left: 0.8em;
 }
 
-/* Columnas TRG / Almacén / Bulky / FBA: ocupan el resto de la hoja. Cada
-   columna es un .rp-col-group con su título subrayado (línea horizontal) y
+/* Columnas (frente: TRG / Almacén — atrás: FBA / Bulky / Fierro): ocupan
+   el resto de la hoja. Cada columna es un .rp-col-group con su título
+   subrayado (línea horizontal) y
    una línea vertical (border-left) que la separa de la anterior y baja
    hasta el fondo de la hoja porque el grupo es flex y ocupa toda la altura
    disponible. border, NO background: un color de fondo depende de que el
@@ -140,7 +141,7 @@ body.preview-mode .rp-print-area {
   flex: 1 1 auto;
   min-height: 0;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   margin-top: 3cqw;
 }
 
@@ -166,6 +167,7 @@ body.preview-mode .rp-print-area {
 /* Cara trasera: mismas columnas, pero sin tabla de encabezado arriba —
    un poco de aire antes de los títulos para que no queden pegados al borde. */
 .rp-columns-back {
+  grid-template-columns: repeat(3, 1fr);
   margin-top: 0;
 }
 
