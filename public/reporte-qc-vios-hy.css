@@ -117,17 +117,17 @@
    6 etiquetas de la hoja. */
 .qc-label-obs-grid {
   display: grid;
-  grid-template-columns: 0.85fr 0.95fr 1.2fr;
+  grid-template-columns: 0.9fr 0.95fr 1.15fr;
   column-gap: 5px;
-  row-gap: 0.45cqh;
-  margin-top: 0.35cqh;
+  row-gap: 0.6cqh;
+  margin-top: 0.55cqh;
 }
 
 .qc-obs-item {
   display: flex;
   align-items: center;
   gap: 3px;
-  font-size: 0.92cqh;
+  font-size: 1cqh;
   line-height: 1.2;
   color: var(--gray-900);
   min-width: 0;
@@ -140,9 +140,9 @@
 
 .qc-obs-circle {
   flex-shrink: 0;
-  width: 1.15cqh;
-  height: 1.15cqh;
-  border: 1.2px solid var(--gray-700);
+  width: 1.2cqh;
+  height: 1.2cqh;
+  border: 1.25px solid var(--gray-700);
   border-radius: 50%;
   background: var(--white);
 }
@@ -229,9 +229,9 @@
   .qc-label-row { font-size: 9.2pt; margin-top: 4.5pt; }
   .qc-label-blank { height: 9pt; }
   .qc-label-obs-title { font-size: 9.2pt; margin-top: 6pt; }
-  .qc-label-obs-grid { column-gap: 4pt; row-gap: 2.5pt; margin-top: 3pt; }
-  .qc-obs-item { font-size: 6.3pt; }
-  .qc-obs-circle { width: 7.5pt; height: 7.5pt; }
+  .qc-label-obs-grid { column-gap: 4pt; row-gap: 4pt; margin-top: 4pt; }
+  .qc-obs-item { font-size: 6.8pt; }
+  .qc-obs-circle { width: 7.8pt; height: 7.8pt; }
   .qc-label-inspector { margin-top: 13pt; }
 
   * {
