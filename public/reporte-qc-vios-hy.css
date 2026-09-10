@@ -80,7 +80,7 @@
 
 .qc-label-title {
   text-align: center;
-  font-size: 1.75cqh;
+  font-size: 2.05cqh;
   font-weight: 800;
   letter-spacing: 0.01em;
   color: var(--black);
@@ -147,7 +147,9 @@
   background: var(--white);
 }
 
-.qc-label-inspector { margin-top: auto; padding-top: 0.6cqh; }
+/* Un renglón en blanco antes de Inspector (no "margin-top: auto" —
+   eso lo empujaba hasta el fondo de la tarjeta, dejando un hueco enorme). */
+.qc-label-inspector { margin-top: 2.6cqh; }
 
 /* ==========================================================================
    IMPRESIÓN — hoja Carta HORIZONTAL (11in x 8.5in), 6 etiquetas de
@@ -223,14 +225,14 @@
   }
 
   .qc-label-logo { height: 0.27in; }
-  .qc-label-title { font-size: 12.5pt; margin: 0 0 5pt; }
+  .qc-label-title { font-size: 14.5pt; margin: 0 0 6pt; }
   .qc-label-row { font-size: 9.2pt; margin-top: 4.5pt; }
   .qc-label-blank { height: 9pt; }
   .qc-label-obs-title { font-size: 9.2pt; margin-top: 6pt; }
   .qc-label-obs-grid { column-gap: 4pt; row-gap: 2.5pt; margin-top: 3pt; }
   .qc-obs-item { font-size: 6.3pt; }
   .qc-obs-circle { width: 7.5pt; height: 7.5pt; }
-  .qc-label-inspector { padding-top: 4pt; }
+  .qc-label-inspector { margin-top: 13pt; }
 
   * {
     -webkit-print-color-adjust: exact;
