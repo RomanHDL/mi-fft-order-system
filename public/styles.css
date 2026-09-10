@@ -63,7 +63,7 @@ h1, h2, h3 { margin: 0; }
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 16px 0 20px;
+  padding: 26px 0 20px;
   transition: width 160ms ease, box-shadow 160ms ease;
 }
 
@@ -72,16 +72,6 @@ h1, h2, h3 { margin: 0; }
   width: 240px;
   box-shadow: 4px 0 20px rgba(17, 17, 17, 0.16);
 }
-
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  height: 32px;
-  margin-bottom: 18px;
-  padding: 0 21px;
-  flex-shrink: 0;
-}
-.sidebar-brand img { height: 30px; width: auto; flex-shrink: 0; }
 
 .sidebar-nav {
   display: flex;
