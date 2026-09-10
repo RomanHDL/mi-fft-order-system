@@ -31,12 +31,100 @@ html, body {
   font-family: var(--font);
 }
 
+/* Reserva el espacio de la barra lateral colapsada (ver .app-sidebar) en
+   TODAS las páginas — la barra es position:fixed, así que sin este padding
+   el contenido quedaría debajo de ella. */
+body { padding-left: 64px; }
+
 h1, h2, h3 { margin: 0; }
 
 .hidden { display: none !important; }
 
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* BARRA LATERAL — navegación entre los módulos del sistema. Colapsada     */
+/* (64px) sólo se asoman los íconos; al pasar el mouse se expande (240px)  */
+/* ENCIMA del contenido (position:fixed, no empuja el layout) mostrando el */
+/* nombre de cada módulo.                                                   */
+/* ---------------------------------------------------------------------- */
+
+.app-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 64px;
+  background: var(--white);
+  border-right: 1px solid var(--gray-300);
+  z-index: 100;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 0 20px;
+  transition: width 160ms ease, box-shadow 160ms ease;
+}
+
+.app-sidebar:hover,
+.app-sidebar:focus-within {
+  width: 240px;
+  box-shadow: 4px 0 20px rgba(17, 17, 17, 0.16);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  margin-bottom: 18px;
+  padding: 0 21px;
+  flex-shrink: 0;
+}
+.sidebar-brand img { height: 30px; width: auto; flex-shrink: 0; }
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 13px 20px;
+  color: var(--gray-700);
+  text-decoration: none;
+  white-space: nowrap;
+  border-left: 3px solid transparent;
+}
+.sidebar-link svg { flex-shrink: 0; width: 22px; height: 22px; }
+
+.sidebar-link span {
+  opacity: 0;
+  transition: opacity 100ms ease;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.app-sidebar:hover .sidebar-link span,
+.app-sidebar:focus-within .sidebar-link span { opacity: 1; }
+
+.sidebar-link:hover { background: var(--brand-blue-tint); color: var(--brand-blue-dark); }
+.sidebar-link:focus-visible { outline: 3px solid var(--brand-blue-tint); outline-offset: -3px; }
+
+.sidebar-link.active {
+  color: var(--brand-blue-dark);
+  background: var(--brand-blue-tint);
+  border-left-color: var(--brand-blue);
+}
+
+@media (max-width: 480px) {
+  body { padding-left: 52px; }
+  .app-sidebar { width: 52px; }
+  .sidebar-brand { padding: 0 15px; }
+  .sidebar-link { padding: 12px 15px; gap: 14px; }
 }
 
 /* ---------------------------------------------------------------------- */
@@ -665,6 +753,7 @@ body.modal-open {
   }
 
   .no-print { display: none !important; }
+  .app-sidebar { display: none !important; }
 
   body * { visibility: hidden; }
 

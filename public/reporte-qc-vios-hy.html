@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reporte QC - VIOS / HY · Mi Technologies</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/reporte-qc-vios-hy.css">
+</head>
+<body>
+
+  <!-- ============================== BARRA LATERAL ============================== -->
+  <nav class="app-sidebar no-print" aria-label="Módulos del sistema">
+    <div class="sidebar-brand">
+      <img src="/logo-mitech.png" alt="Mi Technologies" class="brand-logo">
+    </div>
+    <div class="sidebar-nav">
+      <a href="/" class="sidebar-link">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        <span>Etiquetas FFT</span>
+      </a>
+      <a href="/reporte-paletizado.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+          <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"></path>
+          <line x1="9" y1="13" x2="15" y2="13"></line>
+          <line x1="9" y1="17" x2="15" y2="17"></line>
+        </svg>
+        <span>Reporte de Paletizado</span>
+      </a>
+      <a href="/control-calidad.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 12l2 2 4-4"></path>
+          <circle cx="12" cy="12" r="9"></circle>
+        </svg>
+        <span>Control de Calidad</span>
+      </a>
+      <a href="/reporte-qc-vios-hy.html" class="sidebar-link active" aria-current="page">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <span>Reporte QC - VIOS / HY</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ============================== HEADER ============================== -->
+  <header class="no-print app-header">
+    <div class="header-left">
+      <img src="/logo-mitech.png" alt="Mi Technologies" class="header-logo brand-logo">
+      <div class="header-titles">
+        <h1>Reporte QC - VIOS / HY</h1>
+        <p class="subtitle">Mi Technologies International S.A. de C.V. · Área FFT TV</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content qc-main">
+
+    <section class="qc-print-bar no-print" aria-label="Impresión">
+      <p class="qc-print-info">
+        Etiquetas en blanco para llenar a mano en línea. Se imprimen 6 por hoja
+        en una sola hoja Carta horizontal.
+      </p>
+      <button type="button" id="qc-btn-print" class="btn btn-primary">Imprimir hoja</button>
+    </section>
+
+    <!-- =================== VISTA PREVIA DE LA HOJA (6 etiquetas) =================== -->
+    <section class="qc-sheet-section" aria-label="Vista previa de la hoja">
+      <div class="qc-sheet-wrap" id="qc-sheet-wrap">
+        <div class="qc-sheet" id="qc-print-area">
+
+          <!-- Las 6 etiquetas son idénticas y se llenan a mano tras imprimirlas. -->
+          <template id="qc-label-template">
+            <div class="qc-label">
+              <div class="qc-label-head">
+                <img src="/logo-mitech.png" alt="Mi Technologies" class="qc-label-logo">
+              </div>
+              <h2 class="qc-label-title">REPORTE QC - VIOS / HY</h2>
+
+              <div class="qc-label-row">
+                <span class="qc-label-tag">Serial:</span>
+                <span class="qc-label-blank"></span>
+              </div>
+              <div class="qc-label-row">
+                <span class="qc-label-tag">Pallet:</span>
+                <span class="qc-label-blank"></span>
+              </div>
+              <div class="qc-label-row">
+                <span class="qc-label-tag">Fecha:</span>
+                <span class="qc-label-blank"></span>
+              </div>
+
+              <div class="qc-label-obs-title">Observaciones:</div>
+              <div class="qc-label-obs-grid">
+                <div class="qc-obs-item"><span class="qc-obs-circle"></span><span>Falta de Bases</span></div>
+                <div class="qc-obs-item"><span class="qc-obs-circle"></span><span>Falta de Baterías</span></div>
+                <div class="qc-obs-item"><span class="qc-obs-circle"></span><span>Etiq Control Mal Colocada</span></div>
+                <div class="qc-obs-item"><span class="qc-obs-circle"></span><span>Falta de Control</span></div>
+                <div class="qc-obs-item"><span class="qc-obs-circle"></span><span>Pantalla estrellada</span></div>
+                <div class="qc-obs-item"><span class="qc-obs-circle"></span><span>Etq Chasis Mal Colocada</span></div>
+                <div class="qc-obs-item"><span class="qc-obs-circle"></span><span>Falta de Tornillos</span></div>
+                <div class="qc-obs-item"><span class="qc-obs-circle"></span><span>Cushon Dañado</span></div>
+                <div class="qc-obs-item"><span class="qc-obs-circle"></span><span>Otros</span></div>
+              </div>
+
+              <div class="qc-label-row qc-label-inspector">
+                <span class="qc-label-tag">Inspector:</span>
+                <span class="qc-label-blank"></span>
+              </div>
+            </div>
+          </template>
+
+        </div>
+      </div>
+    </section>
+
+    <p class="print-info no-print">Al imprimir se generará una sola hoja Carta horizontal con 6 etiquetas idénticas.</p>
+  </main>
+
+  <footer class="no-print app-footer">
+    Mi Technologies Internacional S.A. de C.V. · Sistema interno · Área FFT TV
+  </footer>
+
+  <script src="/reporte-qc-vios-hy.js"></script>
+</body>
+</html>

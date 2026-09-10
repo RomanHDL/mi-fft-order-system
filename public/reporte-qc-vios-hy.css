@@ -1,0 +1,239 @@
+/* ==========================================================================
+   Reporte QC - VIOS / HY — módulo 4. Hoja Carta HORIZONTAL, 6 etiquetas
+   EN BLANCO (3 columnas x 2 filas) que el inspector llena a mano. Reutiliza
+   el mismo mecanismo de hoja de Control de Calidad (control-calidad.css):
+   tarjetas de ~3.45in x 2.9in con borde punteado, escaladas en pantalla con
+   container queries (cqw/cqh) y fijas en pulgadas al imprimir.
+   ========================================================================== */
+
+.qc-main { max-width: 1100px; padding: 20px 16px 40px; }
+
+.qc-print-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: var(--white);
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+
+.qc-print-info {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--gray-700);
+  max-width: 640px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Vista previa — hoja Carta HORIZONTAL con 6 etiquetas (3 x 2)             */
+/* ---------------------------------------------------------------------- */
+
+.qc-sheet-section { display: flex; justify-content: center; }
+
+.qc-sheet-wrap {
+  container-type: size;
+  width: 100%;
+  max-width: 980px;
+  aspect-ratio: 11 / 8.5;
+  margin: 4px auto 0;
+}
+
+.qc-sheet {
+  width: 100%;
+  height: 100%;
+  background: var(--white);
+  border: 1px solid var(--gray-300);
+  padding: 15cqh 1.59cqw;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  column-gap: 1.364cqw;
+  row-gap: 1.765cqh;
+}
+
+.qc-label {
+  border: 1.5px dashed var(--gray-500);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  padding: 1.1cqh 1.5cqw;
+  overflow: hidden;
+  font-family: var(--font);
+  color: var(--black);
+}
+/* flex-shrink:0 en todos los hijos para que un déficit de espacio se vea
+   como overflow real y detectable, no como texto comprimido invisible. */
+.qc-label > * { flex-shrink: 0; }
+
+.qc-label-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  margin-bottom: 0.3cqh;
+}
+.qc-label-logo { height: 3.2cqh; width: auto; flex-shrink: 0; }
+
+.qc-label-title {
+  text-align: center;
+  font-size: 1.75cqh;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: var(--black);
+  margin: 0 0 0.8cqh;
+}
+
+.qc-label-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-size: 1.32cqh;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-top: 0.55cqh;
+}
+
+.qc-label-tag { flex-shrink: 0; white-space: nowrap; }
+
+.qc-label-blank {
+  flex: 1 1 auto;
+  min-width: 14px;
+  height: 1.1cqh;
+  border-bottom: 1.1px solid var(--gray-700);
+}
+
+.qc-label-obs-title {
+  font-size: 1.32cqh;
+  font-weight: 700;
+  color: var(--gray-700);
+  margin-top: 0.9cqh;
+}
+
+/* 9 opciones en cuadrícula de 3 columnas x 3 filas — idéntico orden en las
+   6 etiquetas de la hoja. */
+.qc-label-obs-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 0.95fr 1.2fr;
+  column-gap: 5px;
+  row-gap: 0.45cqh;
+  margin-top: 0.35cqh;
+}
+
+.qc-obs-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.92cqh;
+  line-height: 1.2;
+  color: var(--gray-900);
+  min-width: 0;
+}
+.qc-obs-item span:not(.qc-obs-circle) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.qc-obs-circle {
+  flex-shrink: 0;
+  width: 1.15cqh;
+  height: 1.15cqh;
+  border: 1.2px solid var(--gray-700);
+  border-radius: 50%;
+  background: var(--white);
+}
+
+.qc-label-inspector { margin-top: auto; padding-top: 0.6cqh; }
+
+/* ==========================================================================
+   IMPRESIÓN — hoja Carta HORIZONTAL (11in x 8.5in), 6 etiquetas de
+   EXACTAMENTE 3.4in x 3.925in (~8.64cm x 9.97cm), 3 columnas x 2 filas —
+   mismas medidas que Control de Calidad para que ambos módulos impriman
+   etiquetas del mismo tamaño físico.
+   ========================================================================== */
+
+@page { size: letter landscape; margin: 0; }
+
+@media print {
+  html, body {
+    width: 11in;
+    height: 8.5in;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+  }
+
+  .no-print { display: none !important; }
+
+  body * { visibility: hidden; }
+
+  #qc-sheet-wrap,
+  #qc-sheet-wrap *,
+  #qc-print-area,
+  #qc-print-area * {
+    visibility: visible !important;
+  }
+
+  #qc-sheet-wrap {
+    container-type: normal;
+    position: fixed;
+    inset: 0;
+    width: 11in;
+    height: 8.5in;
+    aspect-ratio: auto;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  #qc-print-area {
+    position: fixed;
+    inset: 0;
+    width: 11in;
+    height: 8.5in;
+    margin: 0;
+    padding: 1.275in 0.175in;
+    border: none;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: repeat(3, 3.45in);
+    grid-template-rows: repeat(2, 2.9in);
+    column-gap: 0.15in;
+    row-gap: 0.15in;
+    overflow: hidden;
+    page-break-before: avoid;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+    break-before: avoid-page;
+    break-after: avoid-page;
+    break-inside: avoid-page;
+  }
+
+  .qc-label {
+    border: 1px dashed #8a8a8a;
+    border-radius: 0;
+    padding: 0.094in 0.164in;
+    page-break-inside: avoid;
+    break-inside: avoid-page;
+  }
+
+  .qc-label-logo { height: 0.27in; }
+  .qc-label-title { font-size: 12.5pt; margin: 0 0 5pt; }
+  .qc-label-row { font-size: 9.2pt; margin-top: 4.5pt; }
+  .qc-label-blank { height: 9pt; }
+  .qc-label-obs-title { font-size: 9.2pt; margin-top: 6pt; }
+  .qc-label-obs-grid { column-gap: 4pt; row-gap: 2.5pt; margin-top: 3pt; }
+  .qc-obs-item { font-size: 6.3pt; }
+  .qc-obs-circle { width: 7.5pt; height: 7.5pt; }
+  .qc-label-inspector { padding-top: 4pt; }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

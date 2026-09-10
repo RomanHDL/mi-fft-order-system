@@ -76,6 +76,24 @@ hoja para salir grandes y legibles).
 - El historial permite buscar, filtrar (fecha, defecto, estado), ver el
   detalle de un reporte y reimprimir uno ya impreso sin cambiar su folio.
 
+## Reporte QC - VIOS / HY
+
+Cuarto módulo (`/reporte-qc-vios-hy.html`), sin captura de datos ni base de
+datos: genera una sola hoja Carta horizontal con **6 etiquetas EN BLANCO**
+(mismo tamaño y mecanismo de impresión que Control de Calidad) para que el
+inspector las llene **a mano** en línea — Serial, Pallet, Fecha, un bloque de
+Observaciones con 9 opciones (Falta de Bases, Falta de Control, Falta de
+Tornillos, Falta de Baterías, Pantalla estrellada, Cushon Dañado, Etiq
+Control Mal Colocada, Etq Chasis Mal Colocada, Otros) e Inspector.
+
+## Navegación entre módulos
+
+Los 4 módulos (Etiquetas FFT, Reporte de Paletizado, Control de Calidad y
+Reporte QC - VIOS / HY) se navegan desde una **barra lateral** fija a la
+izquierda, presente en las 4 páginas: colapsada sólo muestra el ícono de
+cada módulo; al pasar el mouse se expande y muestra el nombre completo,
+resaltando el módulo activo.
+
 ## Despliegue en Vercel
 
 1. Crea un proyecto en [Neon](https://neon.tech) y copia el **connection
@@ -101,6 +119,7 @@ mi-fft-order-system/
 │   ├── app.js              # Lógica: QR en vivo, historial, exportar Excel
 │   ├── reporte-paletizado.html / reporte.css / reporte.js   # Módulo 2
 │   ├── control-calidad.html / control-calidad.css / control-calidad.js  # Módulo 3
+│   ├── reporte-qc-vios-hy.html / reporte-qc-vios-hy.css / reporte-qc-vios-hy.js  # Módulo 4
 │   ├── logo-mitech.png     # Logo oficial (reemplazable)
 │   └── vendor/              # qrcode.min.js y xlsx.full.min.js (sin CDN)
 ├── db/schema.sql          # Esquema de referencia de la tabla `labels`
