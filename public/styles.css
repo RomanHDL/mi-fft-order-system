@@ -63,7 +63,7 @@ h1, h2, h3 { margin: 0; }
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 26px 0 20px;
+  padding: 16px 0 20px;
   transition: width 160ms ease, box-shadow 160ms ease;
 }
 
@@ -72,6 +72,16 @@ h1, h2, h3 { margin: 0; }
   width: 240px;
   box-shadow: 4px 0 20px rgba(17, 17, 17, 0.16);
 }
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  height: 28px;
+  margin-bottom: 18px;
+  padding: 0 20px;
+  flex-shrink: 0;
+}
+.sidebar-brand img { height: 28px; width: 28px; flex-shrink: 0; border-radius: 6px; }
 
 .sidebar-nav {
   display: flex;
@@ -113,7 +123,8 @@ h1, h2, h3 { margin: 0; }
 @media (max-width: 480px) {
   body { padding-left: 52px; }
   .app-sidebar { width: 52px; }
-  .sidebar-brand { padding: 0 15px; }
+  .sidebar-brand { padding: 0 15px; height: 24px; }
+  .sidebar-brand img { height: 24px; width: 24px; }
   .sidebar-link { padding: 12px 15px; gap: 14px; }
 }
 
