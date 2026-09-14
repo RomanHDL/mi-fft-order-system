@@ -1,20 +1,25 @@
 /* ==========================================================================
    Procesado VIOS a HY — módulo nuevo, aislado. Hoja Carta HORIZONTAL
-   (11in x 8.5in) con datos de Fecha / Cantidad / No. Pallet / Responsable,
-   una sola hoja por impresión. Logo grande arriba a la izquierda, título
-   grande debajo. Reutiliza sólo clases globales genéricas del sistema
-   (.app-header, .app-footer, .app-sidebar, .main-content, .btn, .form-msg,
-   .hint, .print-info) — todo lo específico de este módulo usa el prefijo
-   "pvh-" para no chocar con ningún otro módulo existente.
+   (11in x 8.5in) EN BLANCO (Fecha / Cantidad / No. Pallet / Responsable)
+   para llenar a mano, una sola hoja por impresión. Logo grande arriba a la
+   izquierda, título grande debajo. Reutiliza sólo clases globales genéricas
+   del sistema (.app-header, .app-footer, .app-sidebar, .main-content, .btn,
+   .print-info) — todo lo específico de este módulo usa el prefijo "pvh-"
+   para no chocar con ningún otro módulo existente.
    ========================================================================== */
 
 .pvh-main { max-width: 1100px; padding: 20px 16px 40px; }
 
 /* ---------------------------------------------------------------------- */
-/* Barra de captura                                                         */
+/* Barra de impresión                                                       */
 /* ---------------------------------------------------------------------- */
 
-.pvh-bar {
+.pvh-print-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
   background: var(--white);
   border: 1px solid var(--gray-300);
   border-radius: 4px;
@@ -22,56 +27,11 @@
   margin-bottom: 20px;
 }
 
-.pvh-form { width: 100%; }
-
-.pvh-field-row {
-  display: flex;
-  align-items: end;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.pvh-field { display: flex; flex-direction: column; gap: 5px; }
-.pvh-field-date { flex: 0 0 150px; }
-.pvh-field-cantidad { flex: 0 0 150px; }
-.pvh-field-pallet { flex: 1 1 180px; min-width: 160px; }
-.pvh-field-responsable { flex: 1 1 220px; min-width: 200px; }
-
-.pvh-field label {
-  font-weight: 700;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+.pvh-print-info {
+  margin: 0;
+  font-size: 0.88rem;
   color: var(--gray-700);
-}
-
-.pvh-required { color: #c81e2b; font-weight: 700; }
-
-.pvh-field input {
-  width: 100%;
-  padding: 10px 12px;
-  font-size: 1rem;
-  border: 1.5px solid var(--gray-500);
-  border-radius: 3px;
-  background: var(--white);
-  color: var(--black);
-  font-family: var(--font);
-}
-
-.pvh-field input:focus-visible {
-  outline: 3px solid var(--brand-blue-tint);
-  outline-offset: 0;
-  border-color: var(--brand-blue);
-}
-
-.pvh-field input.pvh-field-invalid {
-  border-color: #a01313;
-}
-
-.pvh-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  max-width: 640px;
 }
 
 /* ---------------------------------------------------------------------- */
@@ -82,13 +42,7 @@
   font-size: 1rem;
   font-weight: 700;
   color: var(--gray-900);
-  margin: 0 0 4px;
-}
-
-.pvh-preview-note {
   margin: 0 0 14px;
-  font-size: 0.8rem;
-  color: var(--gray-700);
 }
 
 /* ==========================================================================
@@ -183,22 +137,9 @@
 /* Responsive                                                              */
 /* ---------------------------------------------------------------------- */
 
-@media (max-width: 900px) {
-  .pvh-field-date,
-  .pvh-field-cantidad { flex: 1 1 45%; }
-  .pvh-field-pallet,
-  .pvh-field-responsable { flex: 1 1 45%; }
-  .pvh-actions { width: 100%; }
-  .pvh-actions .btn { flex: 1 1 calc(33.333% - 7px); }
-}
-
 @media (max-width: 600px) {
-  .pvh-field-row { align-items: stretch; }
-  .pvh-field-date,
-  .pvh-field-cantidad,
-  .pvh-field-pallet,
-  .pvh-field-responsable { flex: 1 1 100%; }
-  .pvh-actions .btn { flex: 1 1 100%; }
+  .pvh-print-bar { flex-direction: column; align-items: stretch; }
+  .pvh-print-bar .btn { width: 100%; }
 }
 
 /* ==========================================================================

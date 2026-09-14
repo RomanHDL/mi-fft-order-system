@@ -66,63 +66,26 @@
       <img src="/logo-mitech.png" alt="Mi Technologies" class="header-logo brand-logo">
       <div class="header-titles">
         <h1>Procesado VIOS a HY</h1>
-        <p class="subtitle">Genere e imprima una hoja por registro.</p>
+        <p class="subtitle">Hoja en blanco para llenar a mano. Se imprime una hoja por impresión.</p>
       </div>
     </div>
   </header>
 
   <main class="main-content pvh-main">
 
-    <!-- ======================== BARRA DE CAPTURA ======================== -->
-    <section class="pvh-bar no-print" aria-label="Datos del registro">
-      <form id="pvh-form" novalidate class="pvh-form">
-        <div class="pvh-field-row">
-          <div class="pvh-field pvh-field-date">
-            <label for="pvh-fecha">Fecha <span class="pvh-required">*</span></label>
-            <input id="pvh-fecha" name="fecha" type="text"
-                   placeholder="DD/MM/AAAA" autocomplete="off" spellcheck="false"
-                   inputmode="numeric" maxlength="10"
-                   aria-describedby="pvh-hint">
-          </div>
-
-          <div class="pvh-field pvh-field-cantidad">
-            <label for="pvh-cantidad">Cantidad <span class="pvh-required">*</span></label>
-            <input id="pvh-cantidad" name="cantidad" type="number" min="1" step="1"
-                   placeholder="Ingrese cantidad" autocomplete="off"
-                   aria-describedby="pvh-hint">
-          </div>
-
-          <div class="pvh-field pvh-field-pallet">
-            <label for="pvh-pallet">No. Pallet <span class="pvh-required">*</span></label>
-            <input id="pvh-pallet" name="pallet" type="text"
-                   placeholder="Ingrese No. de pallet" autocomplete="off" spellcheck="false"
-                   aria-describedby="pvh-hint">
-          </div>
-
-          <div class="pvh-field pvh-field-responsable">
-            <label for="pvh-responsable">Responsable <span class="pvh-required">*</span></label>
-            <input id="pvh-responsable" name="responsable" type="text"
-                   placeholder="Ingrese nombre del responsable" autocomplete="off" spellcheck="false"
-                   aria-describedby="pvh-hint">
-          </div>
-
-          <div class="pvh-actions">
-            <button type="button" id="pvh-btn-preview" class="btn">Vista previa</button>
-            <button type="button" id="pvh-btn-print" class="btn btn-primary">Imprimir</button>
-            <button type="button" id="pvh-btn-today" class="btn btn-ghost">Hoy</button>
-          </div>
-        </div>
-      </form>
-
-      <p class="form-msg" id="pvh-form-msg" role="status" aria-live="polite"></p>
-      <p class="hint" id="pvh-hint">Todos los campos son obligatorios. La cantidad debe ser mayor que 0.</p>
+    <!-- ======================== BARRA DE IMPRESIÓN ======================== -->
+    <section class="pvh-print-bar no-print" aria-label="Impresión">
+      <p class="pvh-print-info">
+        Hoja en blanco para llenar a mano en línea. Se imprime una sola hoja
+        Carta horizontal por impresión.
+      </p>
+      <button type="button" id="pvh-btn-print" class="btn btn-primary">Imprimir hoja</button>
     </section>
 
     <!-- =================== VISTA PREVIA DE LA HOJA =================== -->
     <h2 class="pvh-preview-title">Vista previa de impresión</h2>
-    <p class="pvh-preview-note no-print">Se imprimirá una sola hoja Carta horizontal por impresión.</p>
 
-    <section class="pvh-sheet-section" aria-label="Vista previa de impresión" id="pvh-sheet-section">
+    <section class="pvh-sheet-section" aria-label="Vista previa de impresión">
       <div class="pvh-sheet-wrap" id="pvh-sheet-wrap">
         <div class="pvh-sheet" id="pvh-print-area">
           <div class="pvh-header-row">
@@ -133,26 +96,26 @@
           <div class="pvh-fields">
             <div class="pvh-row">
               <span class="pvh-label">Fecha:</span>
-              <span class="pvh-value" id="pvh-print-fecha">&nbsp;</span>
+              <span class="pvh-value"></span>
             </div>
             <div class="pvh-row">
               <span class="pvh-label">Cantidad:</span>
-              <span class="pvh-value" id="pvh-print-cantidad">&nbsp;</span>
+              <span class="pvh-value"></span>
             </div>
             <div class="pvh-row">
               <span class="pvh-label">No. Pallet:</span>
-              <span class="pvh-value" id="pvh-print-pallet">&nbsp;</span>
+              <span class="pvh-value"></span>
             </div>
             <div class="pvh-row">
               <span class="pvh-label">Responsable:</span>
-              <span class="pvh-value" id="pvh-print-responsable">&nbsp;</span>
+              <span class="pvh-value"></span>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <p class="print-info no-print">Al imprimir se generará una sola hoja Carta horizontal con este registro.</p>
+    <p class="print-info no-print">Al imprimir se generará una sola hoja Carta horizontal en blanco para llenar a mano.</p>
   </main>
 
   <footer class="no-print app-footer">
