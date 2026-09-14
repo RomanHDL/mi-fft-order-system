@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procesado VIOS a HY · Mi Technologies</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="stylesheet" href="/procesado-vios-hy.css">
+<link rel="icon" type="image/png" href="/favicon.png">
+</head>
+<body>
+
+  <!-- ============================== BARRA LATERAL ============================== -->
+  <nav class="app-sidebar no-print" aria-label="Módulos del sistema">
+    <div class="sidebar-brand">
+      <img src="/logo-fft-icon.png" alt="Centro de Control FFT" class="brand-logo">
+    </div>
+    <div class="sidebar-nav">
+      <a href="/" class="sidebar-link">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="6 9 6 2 18 2 18 9"></polyline>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+          <rect x="6" y="14" width="12" height="8"></rect>
+        </svg>
+        <span>Etiquetas FFT</span>
+      </a>
+      <a href="/reporte-paletizado.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+          <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"></path>
+          <line x1="9" y1="13" x2="15" y2="13"></line>
+          <line x1="9" y1="17" x2="15" y2="17"></line>
+        </svg>
+        <span>Reporte de Paletizado</span>
+      </a>
+      <a href="/control-calidad.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 12l2 2 4-4"></path>
+          <circle cx="12" cy="12" r="9"></circle>
+        </svg>
+        <span>Control de Calidad</span>
+      </a>
+      <a href="/reporte-qc-vios-hy.html" class="sidebar-link">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <span>Reporte QC - VIOS / HY</span>
+      </a>
+      <a href="/procesado-vios-hy.html" class="sidebar-link active" aria-current="page">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="17 1 21 5 17 9"></polyline>
+          <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+          <polyline points="7 23 3 19 7 15"></polyline>
+          <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+        </svg>
+        <span>Procesado VIOS a HY</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- ============================== HEADER ============================== -->
+  <header class="no-print app-header">
+    <div class="header-left">
+      <img src="/logo-mitech.png" alt="Mi Technologies" class="header-logo brand-logo">
+      <div class="header-titles">
+        <h1>Procesado VIOS a HY</h1>
+        <p class="subtitle">Genere e imprima una hoja por registro.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content pvh-main">
+
+    <!-- ======================== BARRA DE CAPTURA ======================== -->
+    <section class="pvh-bar no-print" aria-label="Datos del registro">
+      <form id="pvh-form" novalidate class="pvh-form">
+        <div class="pvh-field-row">
+          <div class="pvh-field pvh-field-date">
+            <label for="pvh-fecha">Fecha <span class="pvh-required">*</span></label>
+            <input id="pvh-fecha" name="fecha" type="text"
+                   placeholder="DD/MM/AAAA" autocomplete="off" spellcheck="false"
+                   inputmode="numeric" maxlength="10"
+                   aria-describedby="pvh-hint">
+          </div>
+
+          <div class="pvh-field pvh-field-cantidad">
+            <label for="pvh-cantidad">Cantidad <span class="pvh-required">*</span></label>
+            <input id="pvh-cantidad" name="cantidad" type="number" min="1" step="1"
+                   placeholder="Ingrese cantidad" autocomplete="off"
+                   aria-describedby="pvh-hint">
+          </div>
+
+          <div class="pvh-field pvh-field-pallet">
+            <label for="pvh-pallet">No. Pallet <span class="pvh-required">*</span></label>
+            <input id="pvh-pallet" name="pallet" type="text"
+                   placeholder="Ingrese No. de pallet" autocomplete="off" spellcheck="false"
+                   aria-describedby="pvh-hint">
+          </div>
+
+          <div class="pvh-field pvh-field-responsable">
+            <label for="pvh-responsable">Responsable <span class="pvh-required">*</span></label>
+            <input id="pvh-responsable" name="responsable" type="text"
+                   placeholder="Ingrese nombre del responsable" autocomplete="off" spellcheck="false"
+                   aria-describedby="pvh-hint">
+          </div>
+
+          <div class="pvh-actions">
+            <button type="button" id="pvh-btn-preview" class="btn">Vista previa</button>
+            <button type="button" id="pvh-btn-print" class="btn btn-primary">Imprimir</button>
+            <button type="button" id="pvh-btn-today" class="btn btn-ghost">Hoy</button>
+          </div>
+        </div>
+      </form>
+
+      <p class="form-msg" id="pvh-form-msg" role="status" aria-live="polite"></p>
+      <p class="hint" id="pvh-hint">Todos los campos son obligatorios. La cantidad debe ser mayor que 0.</p>
+    </section>
+
+    <!-- =================== VISTA PREVIA DE LA HOJA =================== -->
+    <h2 class="pvh-preview-title">Vista previa de impresión</h2>
+    <p class="pvh-preview-note no-print">Se imprimirá una sola hoja Carta horizontal por impresión.</p>
+
+    <section class="pvh-sheet-section" aria-label="Vista previa de impresión" id="pvh-sheet-section">
+      <div class="pvh-sheet-wrap" id="pvh-sheet-wrap">
+        <div class="pvh-sheet" id="pvh-print-area">
+          <div class="pvh-header-row">
+            <img src="/logo-mitech.png" alt="Mi Technologies" class="pvh-logo brand-logo">
+            <h2 class="pvh-title">Producto Procesado VIOS a HY</h2>
+          </div>
+
+          <div class="pvh-fields">
+            <div class="pvh-row">
+              <span class="pvh-label">Fecha:</span>
+              <span class="pvh-value" id="pvh-print-fecha">&nbsp;</span>
+            </div>
+            <div class="pvh-row">
+              <span class="pvh-label">Cantidad:</span>
+              <span class="pvh-value" id="pvh-print-cantidad">&nbsp;</span>
+            </div>
+            <div class="pvh-row">
+              <span class="pvh-label">No. Pallet:</span>
+              <span class="pvh-value" id="pvh-print-pallet">&nbsp;</span>
+            </div>
+            <div class="pvh-row">
+              <span class="pvh-label">Responsable:</span>
+              <span class="pvh-value" id="pvh-print-responsable">&nbsp;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <p class="print-info no-print">Al imprimir se generará una sola hoja Carta horizontal con este registro.</p>
+  </main>
+
+  <footer class="no-print app-footer">
+    Mi Technologies Internacional S.A. de C.V. · Sistema interno · Área FFT TV
+  </footer>
+
+  <script src="/procesado-vios-hy.js"></script>
+</body>
+</html>
