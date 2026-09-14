@@ -267,7 +267,7 @@
   }
 
   .pvh-logo { width: 4.6in; height: auto; }
-  .pvh-title { font-size: 44pt; margin: 0.3in 0 0; }
+  .pvh-title { font-size: 32pt; margin: 0.3in 0 0; white-space: nowrap; }
   .pvh-fields { margin-top: 0.5in; gap: 0.42in; }
   .pvh-row { gap: 0.15in; }
   .pvh-label { font-size: 22pt; }
